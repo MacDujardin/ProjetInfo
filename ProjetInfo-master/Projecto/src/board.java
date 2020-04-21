@@ -26,9 +26,11 @@ public class Board {
 	public Vector getPosByValue (String value) {
 		for (int y=0 ; y<size ; y ++ ) {
 			for (int x=0; x<size ;x++) {
-				if (board [y][x] == value )
-					return Vector(x,y);	
+				if (board [y][x] == value ) {
+					return new Vector (x,y);
+			    }
+				
 			}
-		}
+		} return null;
 	}
 }

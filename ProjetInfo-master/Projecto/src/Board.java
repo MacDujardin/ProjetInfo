@@ -18,6 +18,8 @@ public class Board {
 	  board [pos.y][pos.x] = value ; 
 	} 
 	public String getValue (Vector pos , Vector vect ) {
+		if (pos.x+vect.x > size-1 || pos.y+vect.y > size-1 || pos.x+vect.x < 0 || pos.y+vect.y < 0)
+			return "out"
 		return board [pos.y+vect.y][pos.x+vect.x];
 	}
 	public String getValue (Vector pos) {
@@ -31,6 +33,7 @@ public class Board {
 			    }
 				
 			}
-		} return null;
+		}
+		return null;
 	}
 }

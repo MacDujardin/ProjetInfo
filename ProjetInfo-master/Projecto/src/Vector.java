@@ -56,6 +56,7 @@ public class Vector {
     }
     
     public Vector perpendiculaire() {
+        //perpendiculaire pour des mvmts avec une des composantes en 0
     	return new Vector(y,x);
     }
 }

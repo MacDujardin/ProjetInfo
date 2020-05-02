@@ -1,4 +1,6 @@
-class Possibilitie{ //extends {
+package quoridor;
+
+public class Possibilitie{ //extends {
 	public parent;
 	public Pawn pion;
 	public Vector dir;
@@ -7,9 +9,10 @@ class Possibilitie{ //extends {
 		/*Constructeur d'une case signifiant que le pion (pion) peut se déplacer vers sa position (vect)*/
 		this.parent = parent;
 		this.pion = pion;
-		dir = vect;
+		dir = vect;}
+	
 		//si cliqué, le pion bouge vers la position de la case Possibilitie choisie
-	}
+	
 
 	public void makemove(){ //événement /!\
 		//fait bouger le pion quand la case Possibilitie est cliquée

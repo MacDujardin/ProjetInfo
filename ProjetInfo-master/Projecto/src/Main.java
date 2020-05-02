@@ -9,12 +9,19 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import quoridor.*;
+
+
 
 public class Main extends Application  {
 
 	Stage quoridor;
 	Scene home, mode1v1 , modeIAhome , modeIAgood ,modeIAdumb ;
 	public int i;
+	public static int size = 17 ;
+	static Board plateau;
+	
+	
 	
 	public static void main(String[] args) {
 	launch(args);
@@ -23,6 +30,7 @@ public class Main extends Application  {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		quoridor = primaryStage;
+		plateau= new Board(size);	
 		
 		Label label1 = new Label("Bienvenue sur Quoridor , veuillez choisir un mode de jeu");
 		Button button1v1 = new Button("Joueur contre Joueur");
@@ -38,29 +46,28 @@ public class Main extends Application  {
 		buttonhome.setOnAction(e -> quoridor.setScene(home));
 		GridPane grid1v1 = new GridPane();
         grid1v1.setGridLinesVisible(true);
-        final int numCols = 17 ;
-        final int numRows = 17 ;
-        for ( i = 0; i < numCols; i++) {
+        
+        for ( i = 0; i < size; i++) {
         	if (i%2 == 0) {
             ColumnConstraints colConst = new ColumnConstraints();
-            colConst.setPercentWidth(100.0 / numCols);
+            colConst.setPercentWidth(100.0 / size);
             grid1v1.getColumnConstraints().add(colConst);
         	} 
         	else {
         		ColumnConstraints colConst = new ColumnConstraints();
-                colConst.setPercentWidth(20.0 / numCols);
+                colConst.setPercentWidth(20.0 / size);
                 grid1v1.getColumnConstraints().add(colConst);
         	}
         }
-        for ( i = 0; i < numRows; i++) {
+        for ( i = 0; i < size; i++) {
         	if( i%2 == 0 ) {
             RowConstraints rowConst = new RowConstraints();
-            rowConst.setPercentHeight(100.0 / numRows);
+            rowConst.setPercentHeight(100.0 / size);
             grid1v1.getRowConstraints().add(rowConst);         
         }
         	else {
         		 RowConstraints rowConst = new RowConstraints();
-                 rowConst.setPercentHeight(20.0 / numRows);
+                 rowConst.setPercentHeight(20.0 / size);
                  grid1v1.getRowConstraints().add(rowConst);  	
         	}
         }

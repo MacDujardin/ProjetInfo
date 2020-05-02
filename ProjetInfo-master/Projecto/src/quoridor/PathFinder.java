@@ -1,6 +1,8 @@
-class PathFinder(){
-	private final Vector up = new Vector(0, -1);
-	private final Vector down = new Vector(0, 1);
+package quoridor;
+
+public class PathFinder(){
+	private Vector up = new Vector(0, -1);
+	public Vector down = new Vector(0, 1);
 	private final Vector right = new Vector(1, 0);
 	private final Vector left = new Vector(-1, 0);
 	private int x = 1;
@@ -346,4 +348,5 @@ class PathFinder(){
 
 		return possibilities_list;
 	}
+}
 }

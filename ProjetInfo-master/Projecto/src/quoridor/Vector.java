@@ -1,3 +1,4 @@
+package quoridor;
 
 public class Vector {	
 	public int x;

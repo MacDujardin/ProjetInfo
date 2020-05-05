@@ -1,6 +1,9 @@
+package quoridor;
+import quoridor.parent;
+
 //author: Nathan Amorison
 
-class Pawn{ //extends {
+public class Pawn{ //extends {
 	private final String white = "white";
 	private final String black = "black";
 	private int click_num = 0;
@@ -13,14 +16,14 @@ class Pawn{ //extends {
 	public Vector pos;
 	public String color;
 	public Pawn enemy;
-	//tableau des possibilités
+	//tableau des possibilitﾃｩs
 	//variable pointeur vers l'adversaire
 	//variable image
 
 	public Pawn(parent, Vector pos, String color, boolean playable){
 		/*Constructeur pour un pion
-		 *parent est la variable qui correspond à l'objet de javafx qui contient le pion
-		 *pos correspond à la position qui est donnée au pion lors de sa construction
+		 *parent est la variable qui correspond ﾃ� l'objet de javafx qui contient le pion
+		 *pos correspond ﾃ� la position qui est donnﾃｩe au pion lors de sa construction
 		 *color est la variable qui permet de choisir la couleur du pion
 		 *playable permet de savoir si le pion est jouable ou pas
 		 *|-> non jouable dans le cas d'une IA
@@ -29,37 +32,37 @@ class Pawn{ //extends {
 		this.pos = pos;
 		this.color = color;
 		if (this.color.equals(white))
-			//mettre l'image correspondant à un pion blanc
+			//mettre l'image correspondant ﾃ� un pion blanc
 		else
-			//mettre l'image correspondant à un pion noir
+			//mettre l'image correspondant ﾃ� un pion noir
 	}
 
 	public void destroyPossibilities(){
-		//on détruit les objets mis dans le tableau des possibilités
+		//on dﾃｩtruit les objets mis dans le tableau des possibilitﾃｩs
 
 		for (int i = 0; i < possibilities.length(); i++)
 			//possibilities[i].destroy() //.hide()
 	}
 
-	public void Clicked(){ //événement /!\
+	public void Clicked(){ //ﾃｩvﾃｩnement /!\
 		click_num++;
 		click_num %= 2;
 		if (click_num > 1e-100){
-			//si c'est la première fois qu'on appuye sur le pion
-			//alors on montre les possibilités de mouvement
+			//si c'est la premiﾃｨre fois qu'on appuye sur le pion
+			//alors on montre les possibilitﾃｩs de mouvement
 			checkCase();
 			checkWall();
 			ShowPossibilities();
 		}
 		else{
-			//c'est que c'est la deuxième fois qu'on appuie sur le pion
-			//donc on cache les possibilités
+			//c'est que c'est la deuxiﾃｨme fois qu'on appuie sur le pion
+			//donc on cache les possibilitﾃｩs
 			destroyPossibilities();
 		}
 	}
 
 	public void ShowPossibilities(){
-		//on montre les possibilités sur le plateau, grâce à un tableau de possibilités
+		//on montre les possibilitﾃｩs sur le plateau, grﾃ｢ce ﾃ� un tableau de possibilitﾃｩs
 		
 	}
 
@@ -80,7 +83,7 @@ class Pawn{ //extends {
 				mur_case = plateau.getValue(pos, mvmt.mul(3));
 				if (mur_case.equals("w")){
 					Vector [] sub_list;
-					//s'il y a un mur derrière le pion, mvmts en L
+					//s'il y a un mur derriﾃｨre le pion, mvmts en L
 					String mur_case_left = plateau.getValue(pos, mvmt.mul(2).add(mvmt.perpendiculaire()));
 					String mur_case_right = plateau.getValue(pos, mvmt.mul(2).sub(mvmt.perpendiculaire()));
 					// /!\ directions interchangees quand mvmt est horizontal => mur_case_right est en realite la verification du mouvement vers la gauche
@@ -111,41 +114,41 @@ class Pawn{ //extends {
 	}
 
 	public void checkCase(){
-		//vérifie qu'il y ait bien une case pour les possibles mouvements
-		boolean [] cases = new boolean[4]
+		//vﾃｩrifie qu'il y ait bien une case pour les possibles mouvements
+		boolean [] cases = new boolean[4];
 		for (int i = 0; i < 4; i++)
 			cases[i] = false;
 		int num_of_possib = 0;
 		Vector down = new Vector(0,1);
 		Vector right = new Vector(1,0);
 
-		if ((pos.x-down.x*2) > -1 and (pos.y-down.y*2) > -1){
+		if ((pos.x-down.x*2) > -1 && (pos.y-down.y*2) > -1){
 			//voir si la case au-dessus existe
 			cases[0] = true;
 			num_of_possib++;
 		}
 
-		if ((pos.x+down.x*2) < 17 and (pos.y+down.y*2) < 17){
+		if ((pos.x+down.x*2) < 17 && (pos.y+down.y*2) < 17){
 			//voir si la case en-dessous existe
 			cases[1] = true;
 			num_of_possib++;
 		}
 
-		if ((pos.x-right.x*2) > -1 and (pos.y-right.y*2) > -1){
-			//voir si la case à gauche existe
+		if ((pos.x-right.x*2) > -1 && (pos.y-right.y*2) > -1){
+			//voir si la case ﾃ� gauche existe
 			cases[2] = true;
 			num_of_possib++;
 		}
 
-		if ((pos.x+right.x*2) < 17 and (pos.y+right.y*2) < 17){
-			//voir si la case à droite existe
+		if ((pos.x+right.x*2) < 17 && (pos.y+right.y*2) < 17){
+			//voir si la case ﾃ� droite existe
 			cases[3] = true;
 			num_of_possib++;
 		}
 
 		int count = 0;
-		Vector cases_possibilities = new Vector[num_of_possib];
-		for (int i = 0; i < cases.length(); i++){
+		Vector []cases_possibilities = new Vector[num_of_possib];
+		for (int i = 0; i < cases.length; i++){
 			if (cases[i] == true){
 				if (i-0 < 1e-100) //si i == 0
 					cases_possibilities[count] = new Vector(-down.x, -down.y);
@@ -162,18 +165,18 @@ class Pawn{ //extends {
 	}
 
 	public void move(Vector newpos){
-		//bouge le pion à la nouvelle position newpos passée en argument
-		//vérifie si le joueur a gagné la partie grâce à ce mouvement
-		//une fois fini, on passe la main à l'autre joueur
+		//bouge le pion ﾃ� la nouvelle position newpos passﾃｩe en argument
+		//vﾃｩrifie si le joueur a gagnﾃｩ la partie grﾃ｢ce ﾃ� ce mouvement
+		//une fois fini, on passe la main ﾃ� l'autre joueur
 
 		if (color == white){
-			if (pos.x == )
+			if (pos.x == 16)
 				plateau.setValue(pos, "bw");
 			else
 				plateau.setValue(pos, null);
 		}
 		else if (color == black){
-			if (pos.x == )
+			if (pos.x == 16)
 				plateau.setValue(pos, "ww");
 			else
 				plateau.setValue(pos, null);
@@ -188,7 +191,7 @@ class Pawn{ //extends {
 	}
 
 	public void win(){
-		//vérifie si la position actuelle est une case gagnante
+		//vﾃｩrifie si la position actuelle est une case gagnante
 
 		boolean stop = false;
 		if (color == white && plateau.getValue(pos) == "ww"){

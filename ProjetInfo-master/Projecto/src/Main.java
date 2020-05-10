@@ -13,6 +13,7 @@ import quoridor.*;
 
 
 
+
 public class Main extends Application  {
 
 	Stage quoridor;
@@ -75,6 +76,7 @@ public class Main extends Application  {
 		BorderPane layout2 = new BorderPane();
 		layout2.setCenter(grid1v1 );
 		layout2.setTop(buttonhome);
+		
 		mode1v1 = new Scene (layout2 , 800 , 800);
 		
 		Label label3 = new Label("choisir une IA");

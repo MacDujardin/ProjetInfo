@@ -1,21 +1,26 @@
 //author: Nathan Amorison (Backend)
 
-import quoridor;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import quoridor.Board;
 
 public class HistoricButton{
-	private parent;
+	private Historic parent;
 	private String label;
 	private Board grid;
 
-	public HistoricButton(parent, String label, Board grid){
+	public HistoricButton(Historic parent, String label, Board grid){
 		this.parent = parent;
 		this.label = label;
 		this.grid = grid;
-
+		Button histobut = new Button();
+        histobut.setOnAction(clicked(null));
 		//doit être un override d'un boutton
 	}
 
-	private clicked(ActionEvent e){
+	private EventHandler<ActionEvent> clicked(ActionEvent e){
+		return null;
 		//quand cliqué, alors on set tout le tableau
 	}
 
@@ -26,6 +31,6 @@ public class HistoricButton{
 
 	public void clear(){
 		//on supprime le boutton
-		//? parent.remove(this);
+		parent.remove(this);
 	}
 }

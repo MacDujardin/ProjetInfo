@@ -14,8 +14,10 @@ public class Wall{
 	private String sens;
 	private Board plateau;
 
+	public Pawn enemy;
+	public Pawn player;
 	public Vector pos;
-	public Wall(GridPane parent,Board plateau, Vector position, String sens){
+	public Wall(GridPane parent, Board plateau, Vector position, String sens){
 		this.parent = parent;
 		this.sens = sens;
 		this.plateau = plateau;
@@ -52,14 +54,14 @@ public class Wall{
 		//trouver les index pour positionner le mur
 
 		//Vﾃｩrifier qu'il n'y a pas dﾃｩjﾃ� un mur
-		if (busy(pos) == False){
-			for (int i = 0; i<size){//static size
+		if (busy() == False){
+			for (int i = 0; i<17){
 				p_path = PathFinder(plateau, player.pos, new Vector(i, 1));
-				e_path = PathFinder(plateau, ennemy.pos, new Vector(i, size));
+				e_path = PathFinder(plateau, enemy.pos, new Vector(i, 17));
 				if (p_path.run() != null && e_path.run() != null){
 					//un chemin existe pour chaque pion, pour pouvoir gagner
-					parent.usingWall()
-					Wall new_wall = new Wall(parent.parent, pos, sens);
+					player.usingWall()
+					Wall new_wall = new Wall(parent, pos, sens);
 					new_wall.disable();
 					new_wall.place();
 					found = True;
@@ -83,7 +85,7 @@ public class Wall{
 		}
 	}
 
-	private boolean busy(Vector pos){
+	private boolean busy(){
 		String val;
 		for (int i = 0; i < 3; i++){
 			if (sens == "Vertical"){
@@ -100,6 +102,46 @@ public class Wall{
 		}
 
 		return false;
+	}
+
+	public boolean placeForIa(){
+		//verif si on peut placer un mur à cette position et dans le sens souhaité, sinon on demande de recommencer
+		boolean found = False;
+
+		if (busy() == False){
+			//on vérifie qu'il existe au moins un chemin par joueur pour gagner
+			for (int i = 0; i<17){
+				p_path = PathFinder(plateau, player.pos, new Vector(i, 1));
+				e_path = PathFinder(plateau, enemy.pos, new Vector(i, 17));
+				if (p_path.run() != null && e_path.run() != null){
+					//un chemin existe pour chaque pion, pour pouvoir gagner
+					player.usingWall()
+					disable();
+					place();
+					found = True;
+					break;
+				}
+			}
+			if (found == True){
+				for (int i = 0; i < 3; i++){
+					if (sens == "Vertical"){
+						//on met un marqueur w (wall) dans le
+						//tableau sur les 3 positions occupﾃｩes par le Wall
+						plateau.setValue(new Vector(pos.x, pos.y+i), "w");
+					}
+					else if (sens == "Horizontal"){
+						//on met un marqueur sur les 3 cases
+						plateau.setValue(new Vector(pos.x+i, pos.y), "w");
+					}
+				}
+				return True;
+			}
+			else
+				return False; //on peut pas placer le mur là
+		}
+
+		else
+			return False;
 	}
 
 	private void disable(){

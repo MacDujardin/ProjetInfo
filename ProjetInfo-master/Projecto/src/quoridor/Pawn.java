@@ -19,7 +19,7 @@ public class Pawn{ //extends {
 	private Vector[] cases_possibilities;
 	private Vector[] [] all_cases_possibilities;
 	private Stock stock;
-	private playable;
+	private String playable;
 
 	public int stock_count = 8;
 	public GridPane parent;
@@ -30,8 +30,8 @@ public class Pawn{ //extends {
 
 	public Pawn(GridPane parent, Vector pos, String color, String playable){
         /*Constructeur pour un pion
-         *parent est la variable qui correspond ﾃ� l'objet de javafx qui contient le pion
-         *pos correspond ﾃ� la position qui est donnﾃｩe au pion lors de sa construction
+         *parent est la variable qui correspond �ｾ�ｿｽ l'objet de javafx qui contient le pion
+         *pos correspond �ｾ�ｿｽ la position qui est donn�ｾ�ｽｩe au pion lors de sa construction
          *color est la variable qui permet de choisir la couleur du pion
          *playable permet de savoir si le pion est jouable ou pas
          *|-> non jouable dans le cas d'une IA
@@ -56,7 +56,7 @@ public class Pawn{ //extends {
     }
 
 	public void destroyPossibilities(){
-		//on d�ｾ�ｽｩtruit les objets mis dans le tableau des possibilit�ｾ�ｽｩs
+		//on d�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩtruit les objets mis dans le tableau des possibilit�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩs
 
 		for (int i = 0; i < possibilities.length; i++) {
 			
@@ -64,26 +64,26 @@ public class Pawn{ //extends {
 			//possibilities[i].destroy() //.hide()
 	}
 
-	public EventHandler<ActionEvent> Clicked(){ //�ｾ�ｽｩv�ｾ�ｽｩnement /!\
+	public EventHandler<ActionEvent> Clicked(){ //�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩv�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩnement /!\
 		click_num++;
 		click_num %= 2;
 		if (click_num > 1e-100){
-			//si c'est la premi�ｾ�ｽｨre fois qu'on appuye sur le pion
-			//alors on montre les possibilit�ｾ�ｽｩs de mouvement
+			//si c'est la premi�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｨre fois qu'on appuye sur le pion
+			//alors on montre les possibilit�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩs de mouvement
 			checkCase();
 			checkWall();
 			ShowPossibilities();
 		}
 		else{
-			//c'est que c'est la deuxi�ｾ�ｽｨme fois qu'on appuie sur le pion
-			//donc on cache les possibilit�ｾ�ｽｩs
+			//c'est que c'est la deuxi�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｨme fois qu'on appuie sur le pion
+			//donc on cache les possibilit�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩs
 			destroyPossibilities();
 		}
 		return null;
 	}
 
 	public void ShowPossibilities(){
-		//on montre les possibilit�ｾ�ｽｩs sur le plateau, gr�ｾ�ｽ｢ce �ｾ�ｿｽ un tableau de possibilit�ｾ�ｽｩs
+		//on montre les possibilit�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩs sur le plateau, gr�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽ｢ce �ｿｽ�ｽｾ�ｿｽ�ｽｿ�ｽｽ un tableau de possibilit�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩs
 		
 	}
 
@@ -104,7 +104,7 @@ public class Pawn{ //extends {
 				mur_case = plateau.getValue(pos, mvmt.mul(3));
 				if (mur_case.equals("w")){
 					Vector [] sub_list;
-					//s'il y a un mur derri�ｾ�ｽｨre le pion, mvmts en L
+					//s'il y a un mur derri�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｨre le pion, mvmts en L
 					String mur_case_left = plateau.getValue(pos, mvmt.mul(2).add(mvmt.perpendiculaire()));
 					String mur_case_right = plateau.getValue(pos, mvmt.mul(2).sub(mvmt.perpendiculaire()));
 					// /!\ directions interchangees quand mvmt est horizontal => mur_case_right est en realite la verification du mouvement vers la gauche
@@ -136,7 +136,7 @@ public class Pawn{ //extends {
 	}
 
 	public void checkCase(){
-		//v�ｾ�ｽｩrifie qu'il y ait bien une case pour les possibles mouvements
+		//v�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩrifie qu'il y ait bien une case pour les possibles mouvements
 		boolean [] cases = new boolean[4];
 		for (int i = 0; i < 4; i++)
 			cases[i] = false;
@@ -157,13 +157,13 @@ public class Pawn{ //extends {
 		}
 
 		if ((pos.x-right.x*2) > -1 && (pos.y-right.y*2) > -1){
-			//voir si la case �ｾ�ｿｽ gauche existe
+			//voir si la case �ｿｽ�ｽｾ�ｿｽ�ｽｿ�ｽｽ gauche existe
 			cases[2] = true;
 			num_of_possib++;
 		}
 
 		if ((pos.x+right.x*2) < 17 && (pos.y+right.y*2) < 17){
-			//voir si la case �ｾ�ｿｽ droite existe
+			//voir si la case �ｿｽ�ｽｾ�ｿｽ�ｽｿ�ｽｽ droite existe
 			cases[3] = true;
 			num_of_possib++;
 		}
@@ -187,9 +187,9 @@ public class Pawn{ //extends {
 	}
 
 	public void move(Vector newpos){
-		//bouge le pion �ｾ�ｿｽ la nouvelle position newpos pass�ｾ�ｽｩe en argument
-		//v�ｾ�ｽｩrifie si le joueur a gagn�ｾ�ｽｩ la partie gr�ｾ�ｽ｢ce �ｾ�ｿｽ ce mouvement
-		//une fois fini, on passe la main �ｾ�ｿｽ l'autre joueur
+		//bouge le pion �ｿｽ�ｽｾ�ｿｽ�ｽｿ�ｽｽ la nouvelle position newpos pass�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩe en argument
+		//v�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩrifie si le joueur a gagn�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩ la partie gr�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽ｢ce �ｿｽ�ｽｾ�ｿｽ�ｽｿ�ｽｽ ce mouvement
+		//une fois fini, on passe la main �ｿｽ�ｽｾ�ｿｽ�ｽｿ�ｽｽ l'autre joueur
 
 		if (color == white){
 			if (pos.x == 16)
@@ -214,7 +214,7 @@ public class Pawn{ //extends {
 	}
 
 	public void win(){
-		//v�ｾ�ｽｩrifie si la position actuelle est une case gagnante
+		//v�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩrifie si la position actuelle est une case gagnante
 
 		boolean stop = false;
 		if (color == white && plateau.getValue(pos) == "ww"){
@@ -238,18 +238,30 @@ public class Pawn{ //extends {
 	public void disable(){
 		//rend le pion statique //configure une action
 	}
+	
+	public void usingWall() {
+		stock_count--;
+	}
 
 	public void runIA(){
 		Random generator = new Random();
+		int wall_or_move;
+		Wall wall;
+		boolean free = false;
+		Vector w_pos;
+		PathFinder e_path, p_path;
+		ArrayList<PFNode[]> pfs = new ArrayList<PFNode[]>();
+		Vector delta;
+		Vector temp_pos;
+
+		PFNode less_cost = null;
+		int node_list_id = 0, node_id =0;
+		
 		if (playable == "IAWeek"){
 			//use random for mouvement
-			int wall_or_move;
-			Wall wall;
-			boolean free = False;
 			int x, y;
 			String[] sens = {"Vertical", "Horizontal"};
 			int chose_sens;
-			Vector w_pos;
 
 			//s'il reste des murs, on peut en poser, sinon c'est d'office un mouvement
 			if (stock_count > 0)
@@ -258,7 +270,7 @@ public class Pawn{ //extends {
 				wall_or_move = 1;
 
 			if (wall_or_move == 0){
-				//mettre un wall à une position random
+				//mettre un wall ﾃ� une position random
 				do{
 					do{
 						x = generator.nextInt(17);
@@ -273,18 +285,19 @@ public class Pawn{ //extends {
 					wall.player = this;
 					wall.enemy = enemy;
 
-					free = wall.placeIA();
+					free = wall.placeForIA();
 				}while(!free);
 			}
-			else if (wall_or_move = 1){
+			else if (wall_or_move ==1) {
 				//trouver tous les moves possibles
-				//se déplacer dans un des mouvements trouvés (random)
+				//se dﾃｩplacer dans un des mouvements trouvﾃｩs (random)
 				checkCase();
 				checkWall();
-
-				//utiliser aléatoirement un Vector dans all_cases_possibilities
+                 
+				//utiliser alﾃｩatoirement un Vector dans all_cases_possibilities
+				int chose_move;
 				do{
-					int chose_move = generator.nextInt(all_cases_possibilities.length);
+					 chose_move = generator.nextInt(all_cases_possibilities.length);
 				} while(all_cases_possibilities[chose_move]!=null);
 
 				int chose_move2 = generator.nextInt(all_cases_possibilities[chose_move].length);
@@ -293,37 +306,26 @@ public class Pawn{ //extends {
 			}
 		}
 
+
 		else if (playable == "IAMedium"){
 			//random entre mur ou move
-			//PF pour savoir où le poser
-			int wall_or_move;
-			Wall wall;
-			boolean free = False;
-			ArrayList<PFNode[]> pfs = new ArrayList<PFNode[]>();
-			PathFinder e_path, p_path;
-			String sens;
-
-			Vector w_pos;
-			Vector delta;
-			Vector temp_pos;
-
-			PFNode less_cost = null;
-			int node_list_id, node_id;
+			//PF pour savoir oﾃｹ le poser
+			String sens= "";
 
 			//s'il reste des murs, on peut en poser, sinon c'est d'office un mouvement
 			if (stock_count > 0)
 				wall_or_move = generator.nextInt(2);
 			else
 				wall_or_move = 1;
-
+		
 			if (wall_or_move == 0){
 				//trouver le pf ennemy
-				for (int i = 0; i<17; i+2){
+				for (int i = 0; i<17; i=i+2){
 					if (color == white)
 						e_path = new PathFinder(plateau, enemy.pos, new Vector(i, 17));
 					else
 						e_path = new PathFinder(plateau, enemy.pos, new Vector(i, 0));
-					pfs.add(e_path.run());
+					pfs.add(e_path.run(null));
 				}
 
 				//trouver le node avec les cost le plus petit dans e_nodes
@@ -349,7 +351,7 @@ public class Pawn{ //extends {
 
 				/*en partant de ce node au plus petit cout, on peut trouver le suivant
 				 *tant qu'on ne peut pas placer le mur, on le place au node suivant
-				 *si plus de node suivant, on regarde dans les nodes précédents
+				 *si plus de node suivant, on regarde dans les nodes prﾃｩcﾃｩdents
 				 */
 				do{
 					b = 0;
@@ -373,9 +375,9 @@ public class Pawn{ //extends {
 								wall.player = this;
 								wall.enemy = enemy;
 								
-								free = wall.placeIA();
+								free = wall.placeForIA();
 							}while(b < 3 && !free);
-							//on met le 2eme node en node à regrader après
+							//on met le 2eme node en node ﾃ� regrader aprﾃｨs
 							temp = pfs.get(node_list_id)[node_id_temp+a];
 							node_id_temp++;
 						}
@@ -405,54 +407,55 @@ public class Pawn{ //extends {
 								wall.player = this;
 								wall.enemy = enemy;
 								
-								free = wall.placeIA();
+								free = wall.placeForIA();
 							}while(b < 3 && !free);
 						}
 						else{
 							wall_or_move = 1;
-							free = True; //on n'a pas mis de mur, mais on sort du do while
+							free = true; //on n'a pas mis de mur, mais on sort du do while
 						}
 					}
 				}while(!free);
 			}
 
-			//normalement on met simplement un else, mais si on est dans le cas qu'on ne trouvait pas d'endroit où
+			//normalement on met simplement un else, mais si on est dans le cas qu'on ne trouvait pas d'endroit oﾃｹ
 			//poser de mur dans le passage de l'ennemi, alors il vaut mieux bouger
-			if (wall_or_move = 1){
-				for (int i = 0; i<17; i+2){
+			if (wall_or_move == 1){
+				for (int i = 0; i<17; i=i+2){
 					if (color == white)
 						p_path = new PathFinder(plateau, pos, new Vector(i, 0));
 					else
 						p_path = new PathFinder(plateau, pos, new Vector(i, 17));
-					pfs.add(p_path.run());
+					pfs.add(p_path.run(null));
 				}
 				//on additionne les couts de tous les nodes dans chaque path pour savoir lequel a le plus petit
 				int [] sommes_couts = new int[pfs.size()];
 				for (int i = 0; i<pfs.size(); i++){
 					sommes_couts[i] = 0;
 					for (int j = 0; j < pfs.get(i).length; j++)
-						sommes_couts[i] = sommes_couts[i] + pfs.get(i)[j].cost;
+						sommes_couts[i] = sommes_couts[i] +(int) pfs.get(i)[j].cost;
 				}
-				int less_cost = sommes_couts[0];
+				int less_cost_node = sommes_couts[0];
 				int id = 0;
-				//trouver l'index du chemin le plus intéressant pour le retrouver dans pfs
+				//trouver l'index du chemin le plus intﾃｩressant pour le retrouver dans pfs
 				for (int i = 1; i < sommes_couts.length; i++){
-					if (less_cost > sommes_couts[i]){
-						less_cost = sommes_couts[i];
+					if (less_cost_node > sommes_couts[i]){
+						less_cost_node = sommes_couts[i];
 						id = i;
 					}
 				}
 
-				//on doit prendre le node qui nous intéresse, pour connaitre sa pos, et bouger dessus
-				//ce node est à l'index 1 dans la liste de node du pathfinder
+				//on doit prendre le node qui nous intﾃｩresse, pour connaitre sa pos, et bouger dessus
+				//ce node est ﾃ� l'index 1 dans la liste de node du pathfinder
 				move(pfs.get(id)[1].getVect());
 			}
 		}
 
 		else if (playable == "IAHard"){
+			String sens="";
 			//PF avec costs pour savoir quoi faire
-			for (int i = 0; i<17; i+2){
-				if (color = white){
+			for (int i = 0; i<17; i=i+2){
+				if (color == white){
 					p_path = new PathFinder(plateau, pos, new Vector(i, 0));
 					e_path = new PathFinder(plateau, enemy.pos, new Vector(i, 17));
 				}
@@ -460,22 +463,22 @@ public class Pawn{ //extends {
 					p_path = new PathFinder(plateau, pos, new Vector(i, 17));
 					e_path = new PathFinder(plateau, enemy.pos, new Vector(i, 0));
 				}
-				pfs.add(p_path.run());
-				pfs.add(e_path.run());
+				pfs.add(p_path.run(null));
+				pfs.add(e_path.run(null));
 			}
 
 			int [] sommes_couts_p = new int[pfs.size()/2];
 			int [] sommes_couts_e = new int[pfs.size()/2];
 			
-			for (int i = 0; i < pfs.size(); i+2){
+			for (int i = 0; i < pfs.size(); i=i+2){
 				sommes_couts_p[i/2] = 0;
 				for (int j = 0; j < sommes_couts_p.length; j++)
-					sommes_couts_p[i/2] = sommes_couts_p[i/2] + pfs.get(i)[j].cost;
+					sommes_couts_p[i/2] = sommes_couts_p[i/2] + (int) pfs.get(i)[j].cost;
 			}
-			for (int i = 1; i < pfs.size(); i+2){
+			for (int i = 1; i < pfs.size(); i=i+2){
 				sommes_couts_e[(i-1)/2] = 0;
 				for (int j = 0; j < sommes_couts_e.length; j++)
-					sommes_couts_e[(i-1)/2] = sommes_couts_e[(i-1)/2] + pfs.get(i)[j];
+					sommes_couts_e[(i-1)/2] = sommes_couts_e[(i-1)/2] +(int) pfs.get(i)[j].cost;
 			}
 
 			int less_cost_p = sommes_couts_p[0];
@@ -498,11 +501,9 @@ public class Pawn{ //extends {
 			if (less_cost_p < less_cost_e && stock_count > 0){
 				//placer un mur
 				//trouver le node ennemi avec le cost le plus bas dans le path le plus court
-				PFNode less_cost = pfs.get(id_e*2+1)[0];
-				int node_id = 0;
 				for (int i = 1; i < pfs.get(id_e*2+1).length; i++){
 					if (less_cost.cost > pfs.get(id_e*2+1)[i].cost){
-						less_cost = pfs.get(id_e*2+1)[i].cost;
+						less_cost = pfs.get(id_e*2+1)[i];
 						node_id = i;
 					}
 				}
@@ -514,7 +515,7 @@ public class Pawn{ //extends {
 
 				/*en partant de ce node au plus petit cout, on peut trouver le suivant
 				 *tant qu'on ne peut pas placer le mur, on le place au node suivant
-				 *si plus de node suivant, on regarde dans les nodes précédents
+				 *si plus de node suivant, on regarde dans les nodes prﾃｩcﾃｩdents
 				 */
 				do{
 					b = 0;
@@ -538,9 +539,9 @@ public class Pawn{ //extends {
 								wall.player = this;
 								wall.enemy = enemy;
 								
-								free = wall.placeIA();
+								free = wall.placeForIA();
 							}while(b < 3 && !free);
-							//on met le 2eme node en node à regrader après
+							//on met le 2eme node en node ﾃ� regrader aprﾃｨs
 							temp = pfs.get(node_list_id)[node_id_temp+a];
 							node_id_temp++;
 						}
@@ -570,19 +571,19 @@ public class Pawn{ //extends {
 								wall.player = this;
 								wall.enemy = enemy;
 								
-								free = wall.placeIA();
+								free = wall.placeForIA();
 							}while(b < 3 && !free);
 						}
 						else{
 							wall_or_move = 1;
-							free = True; //on n'a pas mis de mur, mais on sort du do while
+							free = true; //on n'a pas mis de mur, mais on sort du do while
 						}
 					}
 				}while(!free);
 			}
 			else{
 				//bouger
-				move(pfs.get(id_p*2)[1].getVect())
+				move(pfs.get(id_p*2)[1].getVect());
 			}
 		}
 	}

@@ -12,6 +12,8 @@ public class PathFinder {
 	public Vector depart;
 	public Vector arrivee;
 	public PFNode [] nodelist;
+	
+	
 
 	public PathFinder(Board parent, Vector depart, Vector arrivee){
 		grille = parent;
@@ -84,6 +86,8 @@ public class PathFinder {
 		}
 		return null;
 	}
+	
+	
 
 	/*
 	public static Node[] get(){

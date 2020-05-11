@@ -12,11 +12,11 @@ public class Stock{
     public Pawn player;
     public Wall vert;
     public Wall hori;
-    public GridPane stockpane
+    public GridPane stockpane;
 
     public Stock(BorderPane parent, int n){
         this.parent = parent;
-        tockpane = new GridPane();
+        stockpane = new GridPane();
 
         Button wallh = new Button();
         wallh.setOnAction(null);
@@ -30,6 +30,6 @@ public class Stock{
     }
 
     public void usingWall(){
-        player.stock--;
+        player.stock_count--;
     }
 }

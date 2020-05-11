@@ -1,7 +1,7 @@
 package quoridor;
 
 public class PFNode{
-	private Vector pos;
+	public Vector pos;
 	
 	public PFNode parent;
 	public Board grille;

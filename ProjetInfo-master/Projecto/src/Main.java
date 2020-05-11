@@ -104,6 +104,8 @@ public class Main extends Application  {
 		VBox layout5 = new VBox();
 		layout5.getChildren().addAll(label5 , returnhome2);
 		modeIAgood = new Scene (layout5 ,500 ,500);
+
+		//faire fonctionner le jeu ici
 		
 		quoridor.setScene(home);
 		quoridor.setTitle("Quoridor");

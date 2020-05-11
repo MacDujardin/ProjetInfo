@@ -14,9 +14,9 @@ public class Vector {
  		y=0;
     
   				}
-     public Vector mul (int n) {
-    	 return new Vector (n*x,n*y);
-     }
+    public Vector mul (int n) {
+	   return new Vector (n*x,n*y);
+    }
      
     public Vector add (Vector vect) {
     	return new Vector (x+vect.x,y+vect.y);
@@ -59,6 +59,12 @@ public class Vector {
     public Vector perpendiculaire() {
         //perpendiculaire pour des mvmts avec une des composantes en 0
     	return new Vector(y,x);
+    }
+
+    public Vector delta(Vector vect){
+        int n_x = vect.x - x;
+        int n_y = vect.y - y;
+        return new Vector(n_x, n_y);
     }
 }
 

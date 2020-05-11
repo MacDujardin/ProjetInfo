@@ -1,9 +1,10 @@
 package quoridor;
 
 public class PFNode{
+	private Vector pos;
+	
 	public PFNode parent;
 	public Board grille;
-	public Vector pos;
 	public double gcost;
 	public double hcost;
 	public double cost;

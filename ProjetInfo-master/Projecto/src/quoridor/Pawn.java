@@ -5,6 +5,8 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import java.util.ArrayList;
+import java.util.Random;
 //import quoridor.*;
 
 //author: Nathan Amorison
@@ -17,6 +19,7 @@ public class Pawn{ //extends {
 	private Vector[] cases_possibilities;
 	private Vector[] [] all_cases_possibilities;
 	private Stock stock;
+	private playable;
 
 	public int stock_count = 8;
 	public GridPane parent;
@@ -25,7 +28,7 @@ public class Pawn{ //extends {
 	public Pawn enemy;
 	public Board plateau;// = Main.plateau;
 
-	public Pawn(GridPane parent, Vector pos, String color, boolean playable){
+	public Pawn(GridPane parent, Vector pos, String color, String playable){
         /*Constructeur pour un pion
          *parent est la variable qui correspond ﾃ� l'objet de javafx qui contient le pion
          *pos correspond ﾃ� la position qui est donnﾃｩe au pion lors de sa construction
@@ -36,11 +39,12 @@ public class Pawn{ //extends {
         this.parent = parent;
         this.pos = pos;
         this.color = color;
+        this.playable = playable;
         Image whitep = new Image("file:Black.png");
         Image blackp = new Image("file:Black.png");
         Button pawnbutton = new Button();
         parent.add(pawnbutton , pos.x , pos.y);
-        pawnbutton.setOnAction(Clicked());
+        pawnbutton.setOnAction(Clicked()); //a mettre dans enable
         pawnbutton.setOpacity(0);
 
         if (this.color.equals(white)) {
@@ -125,7 +129,7 @@ public class Pawn{ //extends {
 					sub_list = null;
 				}
 
-			Vector[] sub_list = null;
+			Vector[] sub_list = {mvmt}; //juste le move de base
 			all_cases_possibilities[i] = sub_list;
 			}
 		}
@@ -233,5 +237,353 @@ public class Pawn{ //extends {
 
 	public void disable(){
 		//rend le pion statique //configure une action
+	}
+
+	public void runIA(){
+		Random generator = new Random();
+		if (playable == "IAWeek"){
+			//use random for mouvement
+			int wall_or_move;
+			Wall wall;
+			boolean free = False;
+			int x, y;
+			String[] sens = {"Vertical", "Horizontal"};
+			int chose_sens;
+			Vector w_pos;
+
+			//s'il reste des murs, on peut en poser, sinon c'est d'office un mouvement
+			if (stock_count > 0)
+				wall_or_move = generator.nextInt(2);
+			else
+				wall_or_move = 1;
+
+			if (wall_or_move == 0){
+				//mettre un wall à une position random
+				do{
+					do{
+						x = generator.nextInt(17);
+					}while (x%2 == 1);
+					do{
+						y = generator.nextInt(17);
+					}while (y%2 == 1);
+					chose_sens = generator.nextInt(2);
+					w_pos = new Vector(x,y);
+
+					wall = new Wall(parent, plateau, w_pos, sens[chose_sens]);
+					wall.player = this;
+					wall.enemy = enemy;
+
+					free = wall.placeIA();
+				}while(!free);
+			}
+			else if (wall_or_move = 1){
+				//trouver tous les moves possibles
+				//se déplacer dans un des mouvements trouvés (random)
+				checkCase();
+				checkWall();
+
+				//utiliser aléatoirement un Vector dans all_cases_possibilities
+				do{
+					int chose_move = generator.nextInt(all_cases_possibilities.length);
+				} while(all_cases_possibilities[chose_move]!=null);
+
+				int chose_move2 = generator.nextInt(all_cases_possibilities[chose_move].length);
+
+				move(all_cases_possibilities[chose_move][chose_move2]);
+			}
+		}
+
+		else if (playable == "IAMedium"){
+			//random entre mur ou move
+			//PF pour savoir où le poser
+			int wall_or_move;
+			Wall wall;
+			boolean free = False;
+			ArrayList<PFNode[]> pfs = new ArrayList<PFNode[]>();
+			PathFinder e_path, p_path;
+			String sens;
+
+			Vector w_pos;
+			Vector delta;
+			Vector temp_pos;
+
+			PFNode less_cost = null;
+			int node_list_id, node_id;
+
+			//s'il reste des murs, on peut en poser, sinon c'est d'office un mouvement
+			if (stock_count > 0)
+				wall_or_move = generator.nextInt(2);
+			else
+				wall_or_move = 1;
+
+			if (wall_or_move == 0){
+				//trouver le pf ennemy
+				for (int i = 0; i<17; i+2){
+					if (color == white)
+						e_path = new PathFinder(plateau, enemy.pos, new Vector(i, 17));
+					else
+						e_path = new PathFinder(plateau, enemy.pos, new Vector(i, 0));
+					pfs.add(e_path.run());
+				}
+
+				//trouver le node avec les cost le plus petit dans e_nodes
+				for(int i = 1; i < pfs.size(); i++){
+					for (int n = 0; n<pfs.get(i).length; n++){
+						if(less_cost == null){
+							less_cost = pfs.get(i)[n];
+							node_list_id = i;
+							node_id = n;
+						}
+						else if (less_cost.cost > pfs.get(i)[n].cost){
+							less_cost = pfs.get(i)[n];
+							node_list_id = i;
+							node_id = n;
+						}
+					}
+				}
+
+				PFNode temp = less_cost;
+				int node_id_temp = node_id;
+				int a = 1;
+				int b;
+
+				/*en partant de ce node au plus petit cout, on peut trouver le suivant
+				 *tant qu'on ne peut pas placer le mur, on le place au node suivant
+				 *si plus de node suivant, on regarde dans les nodes précédents
+				 */
+				do{
+					b = 0;
+					if (a>0){
+						//verif s'il y a un node apres
+						if(pfs.get(node_list_id).length>node_id_temp+a){
+							delta = temp.pos.delta(pfs.get(node_list_id)[node_id_temp+a].pos).truediv(2);
+							w_pos = temp.pos.add(delta);
+							temp_pos = w_pos;
+							if (delta.x == 0)
+								sens = "Horizontal";
+							else if (delta.y == 0)
+								sens = "Vertical";
+							do{
+								if (sens == "Horizontal")
+									temp_pos.x = w_pos.x + b;
+								else
+									temp_pos.y = w_pos.y + b;
+								b++;
+								wall = new Wall(parent, plateau, temp_pos, sens);
+								wall.player = this;
+								wall.enemy = enemy;
+								
+								free = wall.placeIA();
+							}while(b < 3 && !free);
+							//on met le 2eme node en node à regrader après
+							temp = pfs.get(node_list_id)[node_id_temp+a];
+							node_id_temp++;
+						}
+						//sinon, il faudra regarder devant
+						else{
+							a = -1;
+							temp = less_cost;
+						}
+					}
+					else{
+						//verif s'il y a un node avant
+						if(temp.parent != null){
+							delta = temp.pos.delta(temp.parent.pos).truediv(2);
+							w_pos = temp.pos.add(delta);
+							temp_pos = w_pos;
+							if (delta.x == 0)
+								sens = "Horizontal";
+							else if (delta.y == 0)
+								sens = "Vertical";
+							do{
+								if (sens == "Horizontal")
+									temp_pos.x = w_pos.x + b;
+								else
+									temp_pos.y = w_pos.y + b;
+								b++;
+								wall = new Wall(parent, plateau, temp_pos, sens);
+								wall.player = this;
+								wall.enemy = enemy;
+								
+								free = wall.placeIA();
+							}while(b < 3 && !free);
+						}
+						else{
+							wall_or_move = 1;
+							free = True; //on n'a pas mis de mur, mais on sort du do while
+						}
+					}
+				}while(!free);
+			}
+
+			//normalement on met simplement un else, mais si on est dans le cas qu'on ne trouvait pas d'endroit où
+			//poser de mur dans le passage de l'ennemi, alors il vaut mieux bouger
+			if (wall_or_move = 1){
+				for (int i = 0; i<17; i+2){
+					if (color == white)
+						p_path = new PathFinder(plateau, pos, new Vector(i, 0));
+					else
+						p_path = new PathFinder(plateau, pos, new Vector(i, 17));
+					pfs.add(p_path.run());
+				}
+				//on additionne les couts de tous les nodes dans chaque path pour savoir lequel a le plus petit
+				int [] sommes_couts = new int[pfs.size()];
+				for (int i = 0; i<pfs.size(); i++){
+					sommes_couts[i] = 0;
+					for (int j = 0; j < pfs.get(i).length; j++)
+						sommes_couts[i] = sommes_couts[i] + pfs.get(i)[j].cost;
+				}
+				int less_cost = sommes_couts[0];
+				int id = 0;
+				//trouver l'index du chemin le plus intéressant pour le retrouver dans pfs
+				for (int i = 1; i < sommes_couts.length; i++){
+					if (less_cost > sommes_couts[i]){
+						less_cost = sommes_couts[i];
+						id = i;
+					}
+				}
+
+				//on doit prendre le node qui nous intéresse, pour connaitre sa pos, et bouger dessus
+				//ce node est à l'index 1 dans la liste de node du pathfinder
+				move(pfs.get(id)[1].getVect());
+			}
+		}
+
+		else if (playable == "IAHard"){
+			//PF avec costs pour savoir quoi faire
+			for (int i = 0; i<17; i+2){
+				if (color = white){
+					p_path = new PathFinder(plateau, pos, new Vector(i, 0));
+					e_path = new PathFinder(plateau, enemy.pos, new Vector(i, 17));
+				}
+				else{
+					p_path = new PathFinder(plateau, pos, new Vector(i, 17));
+					e_path = new PathFinder(plateau, enemy.pos, new Vector(i, 0));
+				}
+				pfs.add(p_path.run());
+				pfs.add(e_path.run());
+			}
+
+			int [] sommes_couts_p = new int[pfs.size()/2];
+			int [] sommes_couts_e = new int[pfs.size()/2];
+			
+			for (int i = 0; i < pfs.size(); i+2){
+				sommes_couts_p[i/2] = 0;
+				for (int j = 0; j < sommes_couts_p.length; j++)
+					sommes_couts_p[i/2] = sommes_couts_p[i/2] + pfs.get(i)[j].cost;
+			}
+			for (int i = 1; i < pfs.size(); i+2){
+				sommes_couts_e[(i-1)/2] = 0;
+				for (int j = 0; j < sommes_couts_e.length; j++)
+					sommes_couts_e[(i-1)/2] = sommes_couts_e[(i-1)/2] + pfs.get(i)[j];
+			}
+
+			int less_cost_p = sommes_couts_p[0];
+			int id_p = 0;
+			int less_cost_e = sommes_couts_e[0];
+			int id_e = 0;
+			for (int i = 1; i < sommes_couts_p.length; i++){
+				if (sommes_couts_p[i] < less_cost_p){
+					less_cost_p = sommes_couts_p[i];
+					id_p = i;
+				}
+			}
+			for (int i = 1; i < sommes_couts_e.length; i++){
+				if (sommes_couts_e[i] < less_cost_e){
+					less_cost_e = sommes_couts_e[i];
+					id_e = i;
+				}
+			}
+
+			if (less_cost_p < less_cost_e && stock_count > 0){
+				//placer un mur
+				//trouver le node ennemi avec le cost le plus bas dans le path le plus court
+				PFNode less_cost = pfs.get(id_e*2+1)[0];
+				int node_id = 0;
+				for (int i = 1; i < pfs.get(id_e*2+1).length; i++){
+					if (less_cost.cost > pfs.get(id_e*2+1)[i].cost){
+						less_cost = pfs.get(id_e*2+1)[i].cost;
+						node_id = i;
+					}
+				}
+
+				PFNode temp = less_cost;
+				int node_id_temp = node_id;
+				int a = 1;
+				int b;
+
+				/*en partant de ce node au plus petit cout, on peut trouver le suivant
+				 *tant qu'on ne peut pas placer le mur, on le place au node suivant
+				 *si plus de node suivant, on regarde dans les nodes précédents
+				 */
+				do{
+					b = 0;
+					if (a>0){
+						//verif s'il y a un node apres
+						if(pfs.get(node_list_id).length>node_id_temp+a){
+							delta = temp.pos.delta(pfs.get(node_list_id)[node_id_temp+a].pos).truediv(2);
+							w_pos = temp.pos.add(delta);
+							temp_pos = w_pos;
+							if (delta.x == 0)
+								sens = "Horizontal";
+							else if (delta.y == 0)
+								sens = "Vertical";
+							do{
+								if (sens == "Horizontal")
+									temp_pos.x = w_pos.x + b;
+								else
+									temp_pos.y = w_pos.y + b;
+								b++;
+								wall = new Wall(parent, plateau, temp_pos, sens);
+								wall.player = this;
+								wall.enemy = enemy;
+								
+								free = wall.placeIA();
+							}while(b < 3 && !free);
+							//on met le 2eme node en node à regrader après
+							temp = pfs.get(node_list_id)[node_id_temp+a];
+							node_id_temp++;
+						}
+						//sinon, il faudra regarder devant
+						else{
+							a = -1;
+							temp = less_cost;
+						}
+					}
+					else{
+						//verif s'il y a un node avant
+						if(temp.parent != null){
+							delta = temp.pos.delta(temp.parent.pos).truediv(2);
+							w_pos = temp.pos.add(delta);
+							temp_pos = w_pos;
+							if (delta.x == 0)
+								sens = "Horizontal";
+							else if (delta.y == 0)
+								sens = "Vertical";
+							do{
+								if (sens == "Horizontal")
+									temp_pos.x = w_pos.x + b;
+								else
+									temp_pos.y = w_pos.y + b;
+								b++;
+								wall = new Wall(parent, plateau, temp_pos, sens);
+								wall.player = this;
+								wall.enemy = enemy;
+								
+								free = wall.placeIA();
+							}while(b < 3 && !free);
+						}
+						else{
+							wall_or_move = 1;
+							free = True; //on n'a pas mis de mur, mais on sort du do while
+						}
+					}
+				}while(!free);
+			}
+			else{
+				//bouger
+				move(pfs.get(id_p*2)[1].getVect())
+			}
+		}
 	}
 }

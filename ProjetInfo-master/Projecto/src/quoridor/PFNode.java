@@ -1,3 +1,5 @@
+//author: Nathan Amorison
+
 package quoridor;
 
 public class PFNode{

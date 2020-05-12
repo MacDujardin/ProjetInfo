@@ -1,3 +1,5 @@
+//author: Igor Dujardin
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -21,11 +23,12 @@ public class Main extends Application  {
 	public int i;
 	public static int size = 17 ;
 	static Board plateau;
+	public static Pawn player1, player2;
 	
 	
 	
 	public static void main(String[] args) {
-	launch(args);
+		launch(args);
 	}
 
 	@Override
@@ -106,6 +109,8 @@ public class Main extends Application  {
 		modeIAgood = new Scene (layout5 ,500 ,500);
 
 		//faire fonctionner le jeu ici
+		player1 = new Pawn(grid1v1, plateau, new Vector((int)(size/2),size-1), "white", "Player");
+		player2 = new Pawn(grid1v1, plateau, new Vector((int)(size/2),size-1), "white", "Player");
 		
 		quoridor.setScene(home);
 		quoridor.setTitle("Quoridor");

@@ -7,9 +7,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import java.util.ArrayList;
 import java.util.Random;
-//import quoridor.*;
 
-//author: Nathan Amorison
+//author: Nathan Amorison [BACKEND]
+//author: Igor Dujardin [FRONTEND]
 
 public class Pawn{ //extends {
 	private final String white = "white";
@@ -19,19 +19,22 @@ public class Pawn{ //extends {
 	private Vector[] cases_possibilities;
 	private Vector[] [] all_cases_possibilities;
 	private Stock stock;
-	private String playable;
+	private int i;
+	private Button pawnbutton;
 
+	public String playable;
 	public int stock_count = 8;
 	public GridPane parent;
 	public Vector pos;
 	public String color;
 	public Pawn enemy;
-	public Board plateau;// = Main.plateau;
+	public Board plateau;
 
-	public Pawn(GridPane parent, Vector pos, String color, String playable){
+	public Pawn(GridPane parent, Board plateau, Vector pos, String color, String playable){
         /*Constructeur pour un pion
-         *parent est la variable qui correspond �ｾ�ｿｽ l'objet de javafx qui contient le pion
-         *pos correspond �ｾ�ｿｽ la position qui est donn�ｾ�ｽｩe au pion lors de sa construction
+         *parent est la variable qui correspond a l'objet de javafx qui contient le pion
+         *plateau est le "pointeur" vers le tableau Board qui contient les donnees du jeu
+         *pos correspond a la position qui est donne au pion lors de sa construction
          *color est la variable qui permet de choisir la couleur du pion
          *playable permet de savoir si le pion est jouable ou pas
          *|-> non jouable dans le cas d'une IA
@@ -40,12 +43,14 @@ public class Pawn{ //extends {
         this.pos = pos;
         this.color = color;
         this.playable = playable;
-        Image whitep = new Image("file:Black.png");
+        this.plateau = plateau;
+        Image whitep = new Image("file:White.png");
         Image blackp = new Image("file:Black.png");
-        Button pawnbutton = new Button();
+        pawnbutton = new Button();
         parent.add(pawnbutton , pos.x , pos.y);
-        pawnbutton.setOnAction(Clicked()); //a mettre dans enable
-        pawnbutton.setOpacity(0);
+        pawnbutton.setOpacity(100);
+        pawnbutton.setMinWidth(10.0);
+        pawnbutton.setMinHeight(10.0);
 
         if (this.color.equals(white)) {
             pawnbutton.setGraphic(new ImageView(whitep));
@@ -56,35 +61,50 @@ public class Pawn{ //extends {
     }
 
 	public void destroyPossibilities(){
-		//on d�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩtruit les objets mis dans le tableau des possibilit�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩs
-
-		for (int i = 0; i < possibilities.length; i++) {
-			
-		}
-			//possibilities[i].destroy() //.hide()
+		//on detruit les objets mis dans le tableau des possibilites
+		for (i = 0; i < possibilities.length; i++)
+			possibilities[i].destroy();
 	}
 
-	public EventHandler<ActionEvent> Clicked(){ //�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩv�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩnement /!\
+	public EventHandler<ActionEvent> Clicked(){
 		click_num++;
 		click_num %= 2;
 		if (click_num > 1e-100){
-			//si c'est la premi�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｨre fois qu'on appuye sur le pion
-			//alors on montre les possibilit�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩs de mouvement
+			//si c'est la premiere fois qu'on appuye sur le pion
+			//alors on montre les possibilites de mouvement
 			checkCase();
 			checkWall();
 			ShowPossibilities();
 		}
 		else{
-			//c'est que c'est la deuxi�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｨme fois qu'on appuie sur le pion
-			//donc on cache les possibilit�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩs
+			//c'est que c'est la deuxieme fois qu'on appuie sur le pion
+			//donc on cache les possibilites
 			destroyPossibilities();
 		}
 		return null;
 	}
 
 	public void ShowPossibilities(){
-		//on montre les possibilit�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩs sur le plateau, gr�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽ｢ce �ｿｽ�ｽｾ�ｿｽ�ｽｿ�ｽｽ un tableau de possibilit�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩs
-		
+		//on montre les possibilites sur le plateau, grace a un tableau de possibilites
+		int a = 0;
+		for (i = 0; i < all_cases_possibilities.length; i++)
+			if (all_cases_possibilities[i] != null)
+				for (int j = 0; j < all_cases_possibilities[i].length; j++)
+					a++;
+
+		possibilities = new Possibilitie[a];
+		Possibilitie case_choice;
+		a = 0;
+
+		for (i = 0; i < all_cases_possibilities.length; i++){
+			if (all_cases_possibilities[i] != null){
+				for (int j = 0; j < all_cases_possibilities[i].length; j++){
+					case_choice = new Possibilitie(parent, this, all_cases_possibilities[i][j]);
+					possibilities[a] = case_choice;
+					a++;
+				}
+			}
+		}
 	}
 
 	public void checkWall(){
@@ -95,30 +115,30 @@ public class Pawn{ //extends {
 			Vector mvmt = cases_possibilities[i];
 			String mur_case = plateau.getValue(pos, mvmt);
 			String pawn_case = plateau.getValue(pos, mvmt.mul(2));
-			if (mur_case.equals("w"))
+			if (mur_case == "w")
 				all_cases_possibilities[i] = null;
 				//on ne peut pas aller dans cette direction
 
-			else if (pawn_case.equals("p")){
+			else if (pawn_case == "p"){
 				//s'il y a un pion sur la case
 				mur_case = plateau.getValue(pos, mvmt.mul(3));
-				if (mur_case.equals("w")){
+				if (mur_case == "w"){
 					Vector [] sub_list;
-					//s'il y a un mur derri�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｨre le pion, mvmts en L
+					//s'il y a un mur derriere le pion, mvmts en L
 					String mur_case_left = plateau.getValue(pos, mvmt.mul(2).add(mvmt.perpendiculaire()));
 					String mur_case_right = plateau.getValue(pos, mvmt.mul(2).sub(mvmt.perpendiculaire()));
 					// /!\ directions interchangees quand mvmt est horizontal => mur_case_right est en realite la verification du mouvement vers la gauche
-					if (mur_case_left.equals("w") && !mur_case_right.equals("w")){
+					if (mur_case_left == "w" && mur_case_right != "w"){
 						//ajouter le mvmt vers la droite
 						sub_list = new Vector[1];
 						sub_list[0] = mvmt.mul(2).sub(mvmt.perpendiculaire());
 					}
-					else if (!mur_case_left.equals("w") && mur_case_right.equals("w")){
+					else if (mur_case_left != "w" && mur_case_right == "w"){
 						//ajouter le mvmt vers la gauche
 						sub_list = new Vector[1];
 						sub_list[0] = mvmt.mul(2).add(mvmt.perpendiculaire());
 					}
-					else if (!mur_case_left.equals("w") && !mur_case_right.equals("w")){
+					else if (mur_case_left != "w" && mur_case_right != "w"){
 						//ajouter les 2 mvmts
 						sub_list = new Vector[2];
 						sub_list[0] = mvmt.mul(2).sub(mvmt.perpendiculaire());
@@ -128,17 +148,19 @@ public class Pawn{ //extends {
 					//pas de direction possible
 					sub_list = null;
 				}
+			}
 
-			Vector[] sub_list = {mvmt}; //juste le move de base
-			all_cases_possibilities[i] = sub_list;
+			else{
+				Vector[] sub_list = {mvmt.mul(2)}; //juste le move de base
+				all_cases_possibilities[i] = sub_list;
 			}
 		}
 	}
 
 	public void checkCase(){
-		//v�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩrifie qu'il y ait bien une case pour les possibles mouvements
+		//verifie qu'il y ait bien une case pour les possibles mouvements
 		boolean [] cases = new boolean[4];
-		for (int i = 0; i < 4; i++)
+		for (i = 0; i < 4; i++)
 			cases[i] = false;
 		int num_of_possib = 0;
 		Vector down = new Vector(0,1);
@@ -157,20 +179,20 @@ public class Pawn{ //extends {
 		}
 
 		if ((pos.x-right.x*2) > -1 && (pos.y-right.y*2) > -1){
-			//voir si la case �ｿｽ�ｽｾ�ｿｽ�ｽｿ�ｽｽ gauche existe
+			//voir si la case a gauche existe
 			cases[2] = true;
 			num_of_possib++;
 		}
 
 		if ((pos.x+right.x*2) < 17 && (pos.y+right.y*2) < 17){
-			//voir si la case �ｿｽ�ｽｾ�ｿｽ�ｽｿ�ｽｽ droite existe
+			//voir si la case a droite existe
 			cases[3] = true;
 			num_of_possib++;
 		}
 
 		int count = 0;
-		Vector []cases_possibilities = new Vector[num_of_possib];
-		for (int i = 0; i < cases.length; i++){
+		cases_possibilities = new Vector[num_of_possib];
+		for (i = 0; i < cases.length; i++){
 			if (cases[i] == true){
 				if (i-0 < 1e-100) //si i == 0
 					cases_possibilities[count] = new Vector(-down.x, -down.y);
@@ -187,19 +209,19 @@ public class Pawn{ //extends {
 	}
 
 	public void move(Vector newpos){
-		//bouge le pion �ｿｽ�ｽｾ�ｿｽ�ｽｿ�ｽｽ la nouvelle position newpos pass�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩe en argument
-		//v�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩrifie si le joueur a gagn�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩ la partie gr�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽ｢ce �ｿｽ�ｽｾ�ｿｽ�ｽｿ�ｽｽ ce mouvement
-		//une fois fini, on passe la main �ｿｽ�ｽｾ�ｿｽ�ｽｿ�ｽｽ l'autre joueur
+		//bouge le pion a la nouvelle position newpos passee en argument
+		//verifie si le joueur a gagne la partie grace a ce mouvement
+		//une fois fini, on passe la main a l'autre joueur
 
 		if (color == white){
-			if (pos.x == 16)
-				plateau.setValue(pos, "bw");
+			if (pos.y == 16)
+				plateau.setValue(pos, "pawn2win");
 			else
 				plateau.setValue(pos, null);
 		}
 		else if (color == black){
-			if (pos.x == 16)
-				plateau.setValue(pos, "ww");
+			if (pos.y == 0)
+				plateau.setValue(pos, "pawn1win");
 			else
 				plateau.setValue(pos, null);
 		}
@@ -207,36 +229,47 @@ public class Pawn{ //extends {
 		pos = newpos;
 		win();
 		plateau.setValue(pos, "p");
-		//placer le pion, visuellement sur la nouvelle position
 		disable();
+		click_num = 0;
+
 		stock.player = enemy;
-		enemy.enable();
+		if (enemy.playable != "Player")
+			enemy.runIA();
+		else
+			enemy.enable();
+
+		//placer le pion, visuellement sur la nouvelle position
+		parent.getChildren().remove(pawnbutton);
+		parent.add(pawnbutton, pos.x, pos.y);
 	}
 
 	public void win(){
-		//v�ｿｽ�ｽｾ�ｿｽ�ｽｽ�ｽｩrifie si la position actuelle est une case gagnante
+		//verifie si la position actuelle est une case gagnante
 
 		boolean stop = false;
-		if (color == white && plateau.getValue(pos) == "ww"){
+		if (color == white && plateau.getValue(pos) == "pawn1win"){
 			System.out.println("winner is white");
 			stop = true;
 		}
-		else if (color == black && plateau.getValue(pos) == "bw"){
+		else if (color == black && plateau.getValue(pos) == "pawn2win"){
 			System.out.println("winner is black");
 			stop = false;
 		}
 
 		if (stop){
 			//action quitter
+			System.out.println("quitter")
 		}
 	}
 
 	public void enable(){
-		//rend le pion jouable //configure une action
+		//rend le pion jouable
+        pawnbutton.setOnAction(e -> Clicked()); 
 	}
 
 	public void disable(){
-		//rend le pion statique //configure une action
+		//rend le pion statique
+        pawnbutton.setOnAction(e -> null); 
 	}
 	
 	public void usingWall() {
@@ -270,7 +303,7 @@ public class Pawn{ //extends {
 				wall_or_move = 1;
 
 			if (wall_or_move == 0){
-				//mettre un wall ﾃ� une position random
+				//mettre un wall a une position random
 				do{
 					do{
 						x = generator.nextInt(17);
@@ -290,11 +323,11 @@ public class Pawn{ //extends {
 			}
 			else if (wall_or_move ==1) {
 				//trouver tous les moves possibles
-				//se dﾃｩplacer dans un des mouvements trouvﾃｩs (random)
+				//se daplacer dans un des mouvements trouves (random)
 				checkCase();
 				checkWall();
                  
-				//utiliser alﾃｩatoirement un Vector dans all_cases_possibilities
+				//utiliser aleatoirement un Vector dans all_cases_possibilities
 				int chose_move;
 				do{
 					 chose_move = generator.nextInt(all_cases_possibilities.length);
@@ -309,7 +342,7 @@ public class Pawn{ //extends {
 
 		else if (playable == "IAMedium"){
 			//random entre mur ou move
-			//PF pour savoir oﾃｹ le poser
+			//PF pour savoir ou le poser
 			String sens= "";
 
 			//s'il reste des murs, on peut en poser, sinon c'est d'office un mouvement
@@ -329,7 +362,7 @@ public class Pawn{ //extends {
 				}
 
 				//trouver le node avec les cost le plus petit dans e_nodes
-				for(int i = 1; i < pfs.size(); i++){
+				for(i = 1; i < pfs.size(); i++){
 					for (int n = 0; n<pfs.get(i).length; n++){
 						if(less_cost == null){
 							less_cost = pfs.get(i)[n];
@@ -351,7 +384,7 @@ public class Pawn{ //extends {
 
 				/*en partant de ce node au plus petit cout, on peut trouver le suivant
 				 *tant qu'on ne peut pas placer le mur, on le place au node suivant
-				 *si plus de node suivant, on regarde dans les nodes prﾃｩcﾃｩdents
+				 *si plus de node suivant, on regarde dans les nodes precedents
 				 */
 				do{
 					b = 0;
@@ -377,7 +410,7 @@ public class Pawn{ //extends {
 								
 								free = wall.placeForIA();
 							}while(b < 3 && !free);
-							//on met le 2eme node en node ﾃ� regrader aprﾃｨs
+							//on met le 2eme node en node a regrader apres
 							temp = pfs.get(node_list_id)[node_id_temp+a];
 							node_id_temp++;
 						}
@@ -418,10 +451,10 @@ public class Pawn{ //extends {
 				}while(!free);
 			}
 
-			//normalement on met simplement un else, mais si on est dans le cas qu'on ne trouvait pas d'endroit oﾃｹ
+			//normalement on met simplement un else, mais si on est dans le cas qu'on ne trouvait pas d'endroit ou
 			//poser de mur dans le passage de l'ennemi, alors il vaut mieux bouger
 			if (wall_or_move == 1){
-				for (int i = 0; i<17; i=i+2){
+				for (i = 0; i<17; i=i+2){
 					if (color == white)
 						p_path = new PathFinder(plateau, pos, new Vector(i, 0));
 					else
@@ -430,7 +463,7 @@ public class Pawn{ //extends {
 				}
 				//on additionne les couts de tous les nodes dans chaque path pour savoir lequel a le plus petit
 				int [] sommes_couts = new int[pfs.size()];
-				for (int i = 0; i<pfs.size(); i++){
+				for (i = 0; i<pfs.size(); i++){
 					sommes_couts[i] = 0;
 					for (int j = 0; j < pfs.get(i).length; j++)
 						sommes_couts[i] = sommes_couts[i] +(int) pfs.get(i)[j].cost;
@@ -438,15 +471,15 @@ public class Pawn{ //extends {
 				int less_cost_node = sommes_couts[0];
 				int id = 0;
 				//trouver l'index du chemin le plus intﾃｩressant pour le retrouver dans pfs
-				for (int i = 1; i < sommes_couts.length; i++){
+				for (i = 1; i < sommes_couts.length; i++){
 					if (less_cost_node > sommes_couts[i]){
 						less_cost_node = sommes_couts[i];
 						id = i;
 					}
 				}
 
-				//on doit prendre le node qui nous intﾃｩresse, pour connaitre sa pos, et bouger dessus
-				//ce node est ﾃ� l'index 1 dans la liste de node du pathfinder
+				//on doit prendre le node qui nous interesse, pour connaitre sa pos, et bouger dessus
+				//ce node est a l'index 1 dans la liste de node du pathfinder
 				move(pfs.get(id)[1].getVect());
 			}
 		}
@@ -454,7 +487,7 @@ public class Pawn{ //extends {
 		else if (playable == "IAHard"){
 			String sens="";
 			//PF avec costs pour savoir quoi faire
-			for (int i = 0; i<17; i=i+2){
+			for (i = 0; i<17; i=i+2){
 				if (color == white){
 					p_path = new PathFinder(plateau, pos, new Vector(i, 0));
 					e_path = new PathFinder(plateau, enemy.pos, new Vector(i, 17));
@@ -470,12 +503,12 @@ public class Pawn{ //extends {
 			int [] sommes_couts_p = new int[pfs.size()/2];
 			int [] sommes_couts_e = new int[pfs.size()/2];
 			
-			for (int i = 0; i < pfs.size(); i=i+2){
+			for (i = 0; i < pfs.size(); i=i+2){
 				sommes_couts_p[i/2] = 0;
 				for (int j = 0; j < sommes_couts_p.length; j++)
 					sommes_couts_p[i/2] = sommes_couts_p[i/2] + (int) pfs.get(i)[j].cost;
 			}
-			for (int i = 1; i < pfs.size(); i=i+2){
+			for (i = 1; i < pfs.size(); i=i+2){
 				sommes_couts_e[(i-1)/2] = 0;
 				for (int j = 0; j < sommes_couts_e.length; j++)
 					sommes_couts_e[(i-1)/2] = sommes_couts_e[(i-1)/2] +(int) pfs.get(i)[j].cost;
@@ -485,7 +518,7 @@ public class Pawn{ //extends {
 			int id_p = 0;
 			int less_cost_e = sommes_couts_e[0];
 			int id_e = 0;
-			for (int i = 1; i < sommes_couts_p.length; i++){
+			for (i = 1; i < sommes_couts_p.length; i++){
 				if (sommes_couts_p[i] < less_cost_p){
 					less_cost_p = sommes_couts_p[i];
 					id_p = i;
@@ -515,7 +548,7 @@ public class Pawn{ //extends {
 
 				/*en partant de ce node au plus petit cout, on peut trouver le suivant
 				 *tant qu'on ne peut pas placer le mur, on le place au node suivant
-				 *si plus de node suivant, on regarde dans les nodes prﾃｩcﾃｩdents
+				 *si plus de node suivant, on regarde dans les nodes precedents
 				 */
 				do{
 					b = 0;
@@ -541,7 +574,7 @@ public class Pawn{ //extends {
 								
 								free = wall.placeForIA();
 							}while(b < 3 && !free);
-							//on met le 2eme node en node ﾃ� regrader aprﾃｨs
+							//on met le 2eme node en node a regrader apres
 							temp = pfs.get(node_list_id)[node_id_temp+a];
 							node_id_temp++;
 						}

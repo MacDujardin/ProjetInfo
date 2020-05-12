@@ -45,8 +45,8 @@ public class Pawn{ //extends {
         parent.add(pawnbutton , pos.x , pos.y);
         enable();
         pawnbutton.setOpacity(100);
-        pawnbutton.setMinWidth(200.0);
-        pawnbutton.setMinHeight(200.0);
+        pawnbutton.setMinWidth(50.0);
+        pawnbutton.setMinHeight(50.0);
 
         if (this.color.equals(white)) {
             pawnbutton.setGraphic(new ImageView(whitep));

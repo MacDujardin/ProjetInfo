@@ -59,7 +59,7 @@ public class TestPawn extends Application{
         BorderPane layout = new BorderPane();
         layout.setCenter(game_window);
 
-        window = new Scene(layout, 800, 800);
+        window = new Scene(layout, 200, 200);
 
         player1 = new Pawn(game_window, plateau, new Vector((int)(size/2),size-1), "white", "Player");
 

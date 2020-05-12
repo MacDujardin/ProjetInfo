@@ -18,8 +18,8 @@ public class Possibilitie{ //extends {
         dir = vect;
         possibuton = new Button();
         possibuton.setOpacity(100);
-        possibuton.setMinWidth(200.0);
-        possibuton.setMinHeight(200.0);
+        possibuton.setMinWidth(50.0);
+        possibuton.setMinHeight(50.0);
         possibuton.setStyle("-fx-background-color: #00ff00");
         parent.add(possibuton ,pion.pos.x+ vect.x ,pion.pos.y+vect.y);
         possibuton.setOnAction(e -> makemove());

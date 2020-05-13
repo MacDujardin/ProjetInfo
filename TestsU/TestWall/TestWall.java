@@ -13,6 +13,8 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 
 public class TestWall extends Application{
     Stage quoridor;
@@ -63,6 +65,10 @@ public class TestWall extends Application{
         layout.setCenter(game_window);
  
         window = new Scene(layout, 200, 200);
+
+
+        
+        //GridPane test = new GridPane();
  
         Stock stock = new Stock(game_window, plateau, layout);
  
@@ -74,8 +80,16 @@ public class TestWall extends Application{
         player2.stock = stock;
  
         player1.enable();
- 
-        stock.show(player1);
+
+        //stock.show(player1);
+
+        /*Wall test_h = new Wall(test, plateau, new Vector(), "Horizontal");
+        Wall test_v = new Wall(test, plateau, new Vector(), "Vertical");
+
+        test.add(test_h, 0, 0);
+        test.add(test_v, 0, 0);*/
+
+        layout.setBottom(stock);
  
         quoridor.setScene(window);
         quoridor.setTitle("Quoridor - TEST Stock + Wall");

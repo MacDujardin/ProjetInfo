@@ -8,14 +8,13 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import java.net.URL;
 
 public class Wall extends ImageView{
 	private GridPane parent;
 	private String sens;
 	private Board plateau;
 
-	public Pawn enemy;
-	public Pawn player = null;
 	public Vector pos;
 
 	public Wall(GridPane parent, Board plateau, Vector position, String sens){
@@ -23,18 +22,33 @@ public class Wall extends ImageView{
 		this.sens = sens;
 		this.plateau = plateau;
 
-		Image graphic;
+		Image graphic = null;
 
+		URL imageURL = null;
+
+		System.out.println(sens);
 		if (sens == "Vertical"){
 			//creation du visuel pour un mur vertical
-			graphic = new Image("file:wallv.png");
+			imageURL = getClass().getResource("images\\wallv.png");
+
+			setFitWidth(10);
+			setFitHeight(50);
 		}
 		else if (sens == "Horizontal"){
 			//creation du visuel pour un mur horizontal
-			graphic = new Image("file:wallh.png");
+			imageURL = getClass().getResource("images\\wallh.png");
+
+			setFitWidth(50);
+			setFitHeight(10);
 		}
 
-		//setVisible(true);
+		graphic = new Image(imageURL.toExternalForm());
+
+		System.out.println("Loading Image ERROR: " + graphic.isError());
+
+		setImage(graphic);
+
+		setVisible(true);
 
 		pos = position;
 	}
@@ -58,46 +72,12 @@ public class Wall extends ImageView{
 		return false;
 	}
 
-	public boolean placeForIA(){
-		//verif si on peut placer un mur ﾃ� cette position et dans le sens souhaitﾃｩ, sinon on demande de recommencer
-		boolean found = false;
-		PathFinder p_path , e_path ;
+	public String getSens(){
+		return sens;
+	}
 
+	/*private void enable(){
 
-		if (busy() == false){
-			//on vﾃｩrifie qu'il existe au moins un chemin par joueur pour gagner
-			for (int i = 0; i<17; i++){
-				p_path =new PathFinder(plateau, player.pos, new Vector(i, 1));
-				e_path =new PathFinder(plateau, enemy.pos, new Vector(i, 17));
-				if (p_path.run(null) != null && e_path.run(null) != null){
-					//un chemin existe pour chaque pion, pour pouvoir gagner
-					player.usingWall();
-					disable();
-					place();
-					found = true;
-					break;
-				}
-			}
-			if (found == true){
-				for (int i = 0; i < 3; i++){
-					if (sens == "Vertical"){
-						//on met un marqueur w (wall) dans le
-						//tableau sur les 3 positions occup�ｾ�ｽｩes par le Wall
-						plateau.setValue(new Vector(pos.x, pos.y+i), "w");
-					}
-					else if (sens == "Horizontal"){
-						//on met un marqueur sur les 3 cases
-						plateau.setValue(new Vector(pos.x+i, pos.y), "w");
-					}
-				}
-				return true;
-			}
-			else
-				return false; //on peut pas placer le mur lﾃ�
-		}
-
-		else
-			return false;
 	}
 
 	private void disable(){
@@ -106,5 +86,5 @@ public class Wall extends ImageView{
 
 	private void place(){
 		//place le mur sur pos
-	}
+	}*/
 }

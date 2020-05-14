@@ -23,6 +23,8 @@ import javafx.geometry.Insets;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.shape.Rectangle;
 
+import java.util.ArrayList;
+
 public class TestWall extends Application{
     Stage quoridor;
     Scene window;
@@ -30,6 +32,8 @@ public class TestWall extends Application{
     public static int size = 9;
     static Board plateau;
     Pawn player1, player2;
+
+    ArrayList<ArrayList<Rectangle>> tiles = new ArrayList<ArrayList<Rectangle>>();
  
     public static void main(String[] args){
         launch(args);
@@ -42,6 +46,8 @@ public class TestWall extends Application{
   
         GridPane game_window = new GridPane();
         game_window.setGridLinesVisible(true);
+
+
  
         for ( i = 0; i < size; i++) {
             if (i%2 == 0) {
@@ -69,13 +75,20 @@ public class TestWall extends Application{
         }
  
         for (i = 0; i < size; i++){
+            tiles.add(new ArrayList<Rectangle>());
             for (int j = 0; j < size; j++){
                 Rectangle rect = null;
-                if (i%2 == 0 && j%2 == 0) rect = new Rectangle(0,0,20,20);
-                else if((i%2 == 0 && j%2 != 0)) rect = new Rectangle(0,0,20,5);
-                else if((i%2 != 0 && j%2 == 0)) rect = new Rectangle(0,0,5,20);
-                else if((i%2 != 0 && j%2 != 0)) rect = new Rectangle(0,0,20,5);
-                game_window.add(rect, i, j, 1, 1);
+                if(i%2 == 0 && j%2 != 0)
+                    rect = new Rectangle(0,0,20,5);
+                else if(i%2 != 0 && j%2 == 0)
+                    rect = new Rectangle(0,0,5,20);
+                else if(i%2 != 0 && j%2 != 0)
+                    rect = new Rectangle(0,0,5,5);
+
+                if (rect != null)
+                    game_window.add(rect, i, j, 1, 1);
+
+                tiles.get(i).add(rect);
             }
         }
 
@@ -88,7 +101,7 @@ public class TestWall extends Application{
         
         //GridPane test = new GridPane();
  
-        Stock stock = new Stock(game_window, plateau, layout);
+        Stock stock = new Stock(game_window, plateau, layout, tiles);
  
         player1 = new Pawn(game_window, plateau, new Vector((int)(size/2),size-1), "white", "Player");
         player2 = new Pawn(game_window, plateau, new Vector((int)(size/2),0), "black", "Player");

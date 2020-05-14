@@ -1,5 +1,5 @@
 package quoridor;
-public class MMath {
+public class Math {
 	
 	public static int intSup(int x) {
 		return x+1;

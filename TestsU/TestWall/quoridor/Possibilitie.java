@@ -32,7 +32,7 @@ public class Possibilitie{ //extends {
         //fait bouger le pion quand la case Possibilitie est cliquﾃｩe
         Vector newpos = pion.pos.add(dir);
 
-        if (Math.isPair(newpos.y) || Math.isPair(newpos.y)){
+        if (Math.isPair(newpos.x) && Math.isPair(newpos.y)){
             pion.move(newpos);
             pion.destroyPossibilities();
         }

@@ -7,6 +7,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import java.util.ArrayList;
 import java.util.Random;
+import java.net.URL;
 
 //author: Nathan Amorison
 
@@ -39,8 +40,6 @@ public class Pawn{ //extends {
         this.color = color;
         this.playable = playable;
         this.plateau = plateau;
-        Image whitep = new Image("file:White.png");
-        Image blackp = new Image("file:Black.png");
         pawnbutton = new Button();
         parent.add(pawnbutton , pos.x , pos.y);
         enable();
@@ -48,11 +47,15 @@ public class Pawn{ //extends {
         pawnbutton.setMinWidth(50.0);
         pawnbutton.setMinHeight(50.0);
 
+		URL imageURL = null;
+
         if (this.color.equals(white)) {
-            pawnbutton.setGraphic(new ImageView(whitep));
+        	imageURL = getClass().getResource("images\\White.png");
+            pawnbutton.setGraphic(new ImageView(new Image(imageURL.toExternalForm())));
         }
         else {
-            pawnbutton.setGraphic(new ImageView(blackp));
+        	imageURL = getClass().getResource("images\\Black.png");
+            pawnbutton.setGraphic(new ImageView(new Image(imageURL.toExternalForm())));
         }
     }
 

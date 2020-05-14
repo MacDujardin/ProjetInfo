@@ -7,6 +7,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import java.util.ArrayList;
 import java.util.Random;
+import java.net.URL;
 
 //author: Nathan Amorison [BACKEND]
 //author: Igor Dujardin [FRONTEND]
@@ -52,16 +53,21 @@ public class Pawn{ //extends {
         pawnbutton.setMinWidth(20.0);
         pawnbutton.setMinHeight(20.0);
 
+		URL imageURL = null;
+
         if (this.color.equals(white)) {
-            pawnbutton.setGraphic(new ImageView("file:White.png"));
+        	imageURL = getClass().getResource("images\\White.png");
+            pawnbutton.setGraphic(new ImageView(new Image(imageURL.toExternalForm())));
         }
         else {
-            pawnbutton.setGraphic(new ImageView("file:Black.png"));
+        	imageURL = getClass().getResource("images\\Black.png");
+            pawnbutton.setGraphic(new ImageView(new Image(imageURL.toExternalForm())));
         }
     }
 
 	public void destroyPossibilities(){
 		//on detruit les objets mis dans le tableau des possibilites
+		plateau.debug();
 		for (i = 0; i < possibilities.length; i++)
 			possibilities[i].destroy();
 	}
@@ -147,7 +153,10 @@ public class Pawn{ //extends {
 					}
 
 					//pas de direction possible
-					sub_list = null;
+					else
+						sub_list = null;
+
+					all_cases_possibilities[i] = sub_list;
 				}
 				else{
 					Vector direction = pos.add(mvmt.mul(4));
@@ -249,6 +258,7 @@ public class Pawn{ //extends {
 
 	public void enable(){
 		//rend le pion jouable
+		stock.show(this);
         pawnbutton.setOnAction(e -> Clicked());
 	}
 
@@ -258,6 +268,8 @@ public class Pawn{ //extends {
 	}
 	
 	public void usingWall() {
+		disable();
+		enemy.enable();
 		stock_count--;
 	}
 }

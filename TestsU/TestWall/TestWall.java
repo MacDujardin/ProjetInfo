@@ -16,6 +16,13 @@ import javafx.stage.Stage;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 
+import javafx.scene.paint.Color;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.geometry.Insets;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.shape.Rectangle;
+
 public class TestWall extends Application{
     Stage quoridor;
     Scene window;
@@ -61,10 +68,21 @@ public class TestWall extends Application{
             }
         }
  
+        for (i = 0; i < size; i++){
+            for (int j = 0; j < size; j++){
+                Rectangle rect = null;
+                if (i%2 == 0 && j%2 == 0) rect = new Rectangle(0,0,20,20);
+                else if((i%2 == 0 && j%2 != 0)) rect = new Rectangle(0,0,20,5);
+                else if((i%2 != 0 && j%2 == 0)) rect = new Rectangle(0,0,5,20);
+                else if((i%2 != 0 && j%2 != 0)) rect = new Rectangle(0,0,20,5);
+                game_window.add(rect, i, j, 1, 1);
+            }
+        }
+
         BorderPane layout = new BorderPane();
-        layout.setCenter(game_window);
+        layout.setLeft(game_window);
  
-        window = new Scene(layout, 200, 200);
+        window = new Scene(layout, 400, 400);
 
 
         
@@ -89,7 +107,7 @@ public class TestWall extends Application{
         test.add(test_h, 0, 0);
         test.add(test_v, 0, 0);*/
 
-        layout.setBottom(stock);
+        layout.setRight(stock);
  
         quoridor.setScene(window);
         quoridor.setTitle("Quoridor - TEST Stock + Wall");

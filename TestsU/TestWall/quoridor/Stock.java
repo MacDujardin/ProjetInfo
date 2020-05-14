@@ -19,6 +19,7 @@ import javafx.geometry.Insets;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.Node;
+import javafx.scene.shape.Rectangle;
 
 public class Stock extends GridPane{
     public GridPane parent;
@@ -77,9 +78,11 @@ public class Stock extends GridPane{
                 //the drag and drop gesture has ended
                 //if the data was successfully moved, clear it
                 if(event.getTransferMode() == TransferMode.MOVE){
-                    Wall w = new Wall(parent, plateau, new_wall_pos, "Horizontal");
+                    Node tile = (Node)event.getTarget();
+                    tile.setStroke(Color.BROWN);
+                    //Wall w = new Wall(parent, plateau, new_wall_pos, "Horizontal");
 
-                    parent.add(w, new_wall_pos.x, new_wall_pos.y);
+                    //parent.add(w, new_wall_pos.x, new_wall_pos.y);
                 }
                 System.out.println("Drag done wallh");
                 event.consume();
@@ -128,9 +131,12 @@ public class Stock extends GridPane{
                 //the drag and drop gesture has ended
                 //if the data was successfully moved, clear it
                 if(event.getTransferMode() == TransferMode.MOVE){
-                    Wall w = new Wall(parent, plateau, new_wall_pos, "Vertical");
 
-                    parent.add(w, new_wall_pos.x, new_wall_pos.y);
+                    Node tile = (Node)event.getTarget();
+                    tile.setStroke(Color.BROWN);
+                    /*Wall w = new Wall(parent, plateau, new_wall_pos, "Vertical");
+
+                    parent.add(w, new_wall_pos.x, new_wall_pos.y);*/
                 }
                 event.consume();
             }
@@ -157,14 +163,7 @@ public class Stock extends GridPane{
                 Dragboard db = event.getDragboard();
                 boolean success = false;
                 Node node = (Node) event.getTarget();
-
-                if (node != parent) {
-                    Node p;
-                    while ((p = node.getParent()) != parent) {
-                        node = p;
-                    }
-                }
-
+                System.out.println(node.getClass());
                 System.out.println(node);
                 if(db.hasImage()){//} && node == parent){
                     //getVectFromNode(node);
@@ -178,10 +177,11 @@ public class Stock extends GridPane{
 
                     System.out.println(cIndex + ","+rIndex);
 
-                    if (x%2!=0 && y%2!=0){
+                    /*if (x%2!=0 && y%2!=0){
                         new_wall_pos = new Vector(x, y);
                         success = true;
-                    }
+                    }*/
+                    success = true;
                 }
                 //let the source know whether the image was successfully transferred and used
                 event.setDropCompleted(success);

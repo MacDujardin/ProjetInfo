@@ -10,7 +10,7 @@ public class Math {
 	}
 	public static double distance (Vector veca , Vector vecb) {
 		int dx = vecb.x - veca.x;
-		int dy = vecb.y -  veca.x;
+		int dy = vecb.y -  veca.y;
 		double dist = java.lang.Math.sqrt(java.lang.Math.pow(dx, 2)+ java.lang.Math.pow(dy, 2));
 		return dist;
 	}

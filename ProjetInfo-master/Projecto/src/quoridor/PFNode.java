@@ -1,6 +1,7 @@
 //author: Nathan Amorison
 
 package quoridor;
+import java.util.ArrayList;
 
 public class PFNode{
 	public Vector pos;
@@ -22,7 +23,7 @@ public class PFNode{
 
 
 	public PFNode(Board grille, PathFinder parent, Vector position){
-		parent = null;
+		this.parent = null;
 		this.grille = grille;
 		pos = position;
 		gcost = Math.distance(pos, parent.depart);
@@ -41,25 +42,14 @@ public class PFNode{
 		return cost;
 	}
 
-	public PFNode[] getTree(){
-		int x = 2;
-		PFNode[] tree = new PFNode[x];
-		tree[0] = this;
+	public ArrayList<PFNode> getTree(){
+		ArrayList<PFNode> tree = new ArrayList<PFNode>();
+		tree.add(this);
 
 		if (parent != null){
-			PFNode[] parent_tree = parent.getTree();
-			if (parent_tree.length > 1){
-				x = x + parent_tree.length - 1;
-				PFNode[] copy = tree;
-				tree = new PFNode[x];
-				for (int i = 0; i < copy.length; i++)
-					tree[i] = copy[i];
-			}
-			for (int i = x-1; i > -1; i--){
-				tree[x-i] = parent_tree[x-i-1];
-			}
+			for (PFNode n: parent.getTree())
+				tree.add(n);
 		}
-
 		return tree;
 	}
 

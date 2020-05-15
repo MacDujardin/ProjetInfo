@@ -8,9 +8,9 @@ public class Board {
 	      this.size = size; //9 cases de pions et 8 cases de murs
 	      board = new String [size][size];
 	      for ( int row = 0; row<size; row ++ )
-	          board[row] [0]= "pawn1win" ;
+	          board[0] [row]= "pawn1win" ;
 	      for ( int row = 0; row<size ; row ++) 
-	          board [row] [size-1] = "pawn2win";
+	          board [size-1] [row] = "pawn2win";
 	    }
 
 
@@ -36,5 +36,15 @@ public class Board {
 			}
 		}
 		return null;
+	}
+
+	public void debug(){
+		for (int i = 0; i < size; i++){
+			for (int j = 0; j < size; j++){
+				System.out.print(board[i][j]);
+				System.out.print("\t");
+			}
+			System.out.println();
+		}
 	}
 }

@@ -90,8 +90,9 @@ public class PathFinder {
 						return l;
 					}
 				}
-				else
+				else{
 					return null;
+				}
 			}
 			else{
 				return nodelist.get(nodelist.size()-1).getTree();
@@ -104,22 +105,22 @@ public class PathFinder {
 		ArrayList<Vector> possibilities_list = new ArrayList<Vector>();
 
 
-		if (pos.add(up).y > -1 && pos.add(up).y < 9  && pos.add(up).x > -1 && pos.add(up).x < 9){
+		if (pos.add(up).y > -1 && pos.add(up).y < 17  && pos.add(up).x > -1 && pos.add(up).x < 17){
 			if (grille.getValue(pos, up) != "w"){
-				if (pos.add(up.mul(2)).y > -1 && pos.add(up.mul(2)).y < 9 && pos.add(up.mul(2)).x > -1 && pos.add(up.mul(2)).y < 9){
+				if (pos.add(up.mul(2)).y > -1 && pos.add(up.mul(2)).y < 17 && pos.add(up.mul(2)).x > -1 && pos.add(up.mul(2)).y < 17){
 					if (grille.getValue(pos, up.mul(2)) == "p"){
-						if (pos.add(up.mul(3)).y > -1 && pos.add(up.mul(3)).y < 9 && pos.add(up.mul(3)).x > -1 && pos.add(up.mul(3)).x < 9){
+						if (pos.add(up.mul(3)).y > -1 && pos.add(up.mul(3)).y < 17 && pos.add(up.mul(3)).x > -1 && pos.add(up.mul(3)).x < 17){
 							if (grille.getValue(pos, up.mul(3)) != "w")
-								if (pos.add(up.mul(4)).y > -1 && pos.add(up.mul(4)).y < 9 && pos.add(up.mul(4)).x > -1 && pos.add(up.mul(4)).y < 9)
+								if (pos.add(up.mul(4)).y > -1 && pos.add(up.mul(4)).y < 17 && pos.add(up.mul(4)).x > -1 && pos.add(up.mul(4)).y < 17)
 									possibilities_list.add(up.mul(4));
 							else{
-								if (pos.add(up.mul(2)).add(left).y > -1 && pos.add(up.mul(2)).add(left).y < 9 && pos.add(up.mul(2)).add(left).x > -1 && pos.add(up.mul(2)).add(left).x <9 )
+								if (pos.add(up.mul(2)).add(left).y > -1 && pos.add(up.mul(2)).add(left).y < 17 && pos.add(up.mul(2)).add(left).x > -1 && pos.add(up.mul(2)).add(left).x <17 )
 									if (grille.getValue(pos, up.mul(2).add(left)) != "w")
-										if (pos.add(up.mul(2)).add(left.mul(2)).y > -1 && pos.add(up.mul(2)).add(left.mul(2)).y <9  && pos.add(up.mul(2)).add(left.mul(2)).x > -1 && pos.add(up.mul(2)).add(left.mul(2)).x <9)
+										if (pos.add(up.mul(2)).add(left.mul(2)).y > -1 && pos.add(up.mul(2)).add(left.mul(2)).y <17  && pos.add(up.mul(2)).add(left.mul(2)).x > -1 && pos.add(up.mul(2)).add(left.mul(2)).x <17)
 											possibilities_list.add(up.mul(4));
-								if (pos.add(up.mul(2)).add(right).y > -1 && pos.add(up.mul(2)).add(right).y <9  && pos.add(up.mul(2)).add(right).x > -1 && pos.add(up.mul(2)).add(right).x <9 )
+								if (pos.add(up.mul(2)).add(right).y > -1 && pos.add(up.mul(2)).add(right).y <17  && pos.add(up.mul(2)).add(right).x > -1 && pos.add(up.mul(2)).add(right).x <17 )
 									if (grille.getValue(pos, up.mul(2).add(right)) != "w")
-										if (pos.add(up.mul(2)).add(right.mul(2)).y > -1 && pos.add(up.mul(2)).add(right.mul(2)).y <9  && pos.add(up.mul(2)).add(right.mul(2)).x > -1 && pos.add(up.mul(2)).add(right.mul(2)).x <9)
+										if (pos.add(up.mul(2)).add(right.mul(2)).y > -1 && pos.add(up.mul(2)).add(right.mul(2)).y <17  && pos.add(up.mul(2)).add(right.mul(2)).x > -1 && pos.add(up.mul(2)).add(right.mul(2)).x <17)
 											possibilities_list.add(up.mul(4));
 							}
 						}
@@ -131,22 +132,22 @@ public class PathFinder {
 			}
 		}
 
-		if (pos.add(down).y > -1 && pos.add(down).y < 9 && pos.add(down).x > -1 && pos.add(down).x <9 ){
+		if (pos.add(down).y > -1 && pos.add(down).y < 17 && pos.add(down).x > -1 && pos.add(down).x <17 ){
 			if (grille.getValue(pos, down) != "w"){
-				if (pos.add(down.mul(2)).y > -1 && pos.add(down.mul(2)).y < 9 && pos.add(down.mul(2)).x > -1 && pos.add(down.mul(2)).y <9 ){
+				if (pos.add(down.mul(2)).y > -1 && pos.add(down.mul(2)).y < 17 && pos.add(down.mul(2)).x > -1 && pos.add(down.mul(2)).y <17 ){
 					if (grille.getValue(pos, down.mul(2)) == "p"){
-						if (pos.add(down.mul(3)).y > -1 && pos.add(down.mul(3)).y < 9 && pos.add(down.mul(3)).x > -1 && pos.add(down.mul(3)).x <9 ){
+						if (pos.add(down.mul(3)).y > -1 && pos.add(down.mul(3)).y < 17 && pos.add(down.mul(3)).x > -1 && pos.add(down.mul(3)).x <17 ){
 							if (grille.getValue(pos, down.mul(3)) != "w")
-								if (pos.add(down.mul(4)).y > -1 && pos.add(down.mul(4)).y < 9 && pos.add(down.mul(4)).x > -1 && pos.add(down.mul(4)).y <9 )
+								if (pos.add(down.mul(4)).y > -1 && pos.add(down.mul(4)).y < 17 && pos.add(down.mul(4)).x > -1 && pos.add(down.mul(4)).y <17 )
 									possibilities_list.add(down.mul(4));
 							else{
-								if (pos.add(down.mul(2)).add(left).y > -1 && pos.add(down.mul(2)).add(left).y < 9 && pos.add(down.mul(2)).add(left).x > -1 && pos.add(down.mul(2)).add(left).x <9 )
+								if (pos.add(down.mul(2)).add(left).y > -1 && pos.add(down.mul(2)).add(left).y < 17 && pos.add(down.mul(2)).add(left).x > -1 && pos.add(down.mul(2)).add(left).x <17 )
 									if (grille.getValue(pos, down.mul(2).add(left)) != "w")
-										if (pos.add(down.mul(2)).add(left.mul(2)).y > -1 && pos.add(down.mul(2)).add(left.mul(2)).y <9  && pos.add(down.mul(2)).add(left.mul(2)).x > -1 && pos.add(down.mul(2)).add(left.mul(2)).x <9)
+										if (pos.add(down.mul(2)).add(left.mul(2)).y > -1 && pos.add(down.mul(2)).add(left.mul(2)).y <17  && pos.add(down.mul(2)).add(left.mul(2)).x > -1 && pos.add(down.mul(2)).add(left.mul(2)).x <17)
 											possibilities_list.add(down.mul(4));
-								if (pos.add(down.mul(2)).add(right).y > -1 && pos.add(down.mul(2)).add(right).y < 9 && pos.add(down.mul(2)).add(right).x > -1 && pos.add(down.mul(2)).add(right).x < 9)
+								if (pos.add(down.mul(2)).add(right).y > -1 && pos.add(down.mul(2)).add(right).y < 17 && pos.add(down.mul(2)).add(right).x > -1 && pos.add(down.mul(2)).add(right).x < 17)
 									if (grille.getValue(pos, down.mul(2).add(right)) != "w")
-										if (pos.add(down.mul(2)).add(right.mul(2)).y > -1 && pos.add(down.mul(2)).add(right.mul(2)).y <9  && pos.add(down.mul(2)).add(right.mul(2)).x > -1 && pos.add(down.mul(2)).add(right.mul(2)).x <9)
+										if (pos.add(down.mul(2)).add(right.mul(2)).y > -1 && pos.add(down.mul(2)).add(right.mul(2)).y <17  && pos.add(down.mul(2)).add(right.mul(2)).x > -1 && pos.add(down.mul(2)).add(right.mul(2)).x <17)
 											possibilities_list.add(down.mul(4));
 							}
 						}
@@ -157,22 +158,22 @@ public class PathFinder {
 			}
 		}
 
-		if (pos.add(right).y > -1 && pos.add(right).y <9  && pos.add(right).x > -1 && pos.add(right).x <9 ){
+		if (pos.add(right).y > -1 && pos.add(right).y <17  && pos.add(right).x > -1 && pos.add(right).x <17 ){
 			if (grille.getValue(pos, right) != "w"){
-				if (pos.add(right.mul(2)).y > -1 && pos.add(right.mul(2)).y <9  && pos.add(right.mul(2)).x > -1 && pos.add(right.mul(2)).y <9 ){
+				if (pos.add(right.mul(2)).y > -1 && pos.add(right.mul(2)).y <17  && pos.add(right.mul(2)).x > -1 && pos.add(right.mul(2)).y <17 ){
 					if (grille.getValue(pos, right.mul(2)) == "p"){
-						if (pos.add(right.mul(3)).y > -1 && pos.add(right.mul(3)).y < 9 && pos.add(right.mul(3)).x > -1 && pos.add(right.mul(3)).x < 9){
+						if (pos.add(right.mul(3)).y > -1 && pos.add(right.mul(3)).y < 17 && pos.add(right.mul(3)).x > -1 && pos.add(right.mul(3)).x < 17){
 							if (grille.getValue(pos, right.mul(3)) != "w")
-								if (pos.add(right.mul(4)).y > -1 && pos.add(right.mul(4)).y < 9 && pos.add(right.mul(4)).x > -1 && pos.add(right.mul(4)).y <9)
+								if (pos.add(right.mul(4)).y > -1 && pos.add(right.mul(4)).y < 17 && pos.add(right.mul(4)).x > -1 && pos.add(right.mul(4)).y <17)
 									possibilities_list.add(right.mul(4));
 							else{
-								if (pos.add(right.mul(2)).add(up).y > -1 && pos.add(right.mul(2)).add(up).y <9  && pos.add(right.mul(2)).add(up).x > -1 && pos.add(right.mul(2)).add(up).x <9 )
+								if (pos.add(right.mul(2)).add(up).y > -1 && pos.add(right.mul(2)).add(up).y <17  && pos.add(right.mul(2)).add(up).x > -1 && pos.add(right.mul(2)).add(up).x <17 )
 									if (grille.getValue(pos, right.mul(2).add(up)) != "w")
-										if (pos.add(right.mul(2)).add(up.mul(2)).y > -1 && pos.add(right.mul(2)).add(up.mul(2)).y <  9&& pos.add(right.mul(2)).add(up.mul(2)).x > -1 && pos.add(right.mul(2)).add(up.mul(2)).x <9)
+										if (pos.add(right.mul(2)).add(up.mul(2)).y > -1 && pos.add(right.mul(2)).add(up.mul(2)).y <  17&& pos.add(right.mul(2)).add(up.mul(2)).x > -1 && pos.add(right.mul(2)).add(up.mul(2)).x <17)
 											possibilities_list.add(right.mul(4));
-								if (pos.add(right.mul(2)).add(down).y > -1 && pos.add(right.mul(2)).add(down).y <9  && pos.add(right.mul(2)).add(down).x > -1 && pos.add(right.mul(2)).add(down).x < 9)
+								if (pos.add(right.mul(2)).add(down).y > -1 && pos.add(right.mul(2)).add(down).y <17  && pos.add(right.mul(2)).add(down).x > -1 && pos.add(right.mul(2)).add(down).x < 17)
 									if (grille.getValue(pos, right.mul(2).add(down)) != "w")
-										if (pos.add(right.mul(2)).add(down.mul(2)).y > -1 && pos.add(right.mul(2)).add(down.mul(2)).y < 9 && pos.add(right.mul(2)).add(down.mul(2)).x > -1 && pos.add(right.mul(2)).add(down.mul(2)).x <97)
+										if (pos.add(right.mul(2)).add(down.mul(2)).y > -1 && pos.add(right.mul(2)).add(down.mul(2)).y < 17 && pos.add(right.mul(2)).add(down.mul(2)).x > -1 && pos.add(right.mul(2)).add(down.mul(2)).x <177)
 											possibilities_list.add(right.mul(4));
 							}
 						}
@@ -183,22 +184,22 @@ public class PathFinder {
 			}
 		}
 
-		if (pos.add(left).y > -1 && pos.add(left).y < 9 && pos.add(left).x > -1 && pos.add(left).x < 9){
+		if (pos.add(left).y > -1 && pos.add(left).y < 17 && pos.add(left).x > -1 && pos.add(left).x < 17){
 			if (grille.getValue(pos, left) != "w"){
-				if (pos.add(left.mul(2)).y > -1 && pos.add(left.mul(2)).y < 9 && pos.add(left.mul(2)).x > -1 && pos.add(left.mul(2)).y <9 ){
+				if (pos.add(left.mul(2)).y > -1 && pos.add(left.mul(2)).y < 17 && pos.add(left.mul(2)).x > -1 && pos.add(left.mul(2)).y <17 ){
 					if (grille.getValue(pos, left.mul(2)) == "p"){
-						if (pos.add(left.mul(3)).y > -1 && pos.add(left.mul(3)).y < 9 && pos.add(left.mul(3)).x > -1 && pos.add(left.mul(3)).x <9 ){
+						if (pos.add(left.mul(3)).y > -1 && pos.add(left.mul(3)).y < 17 && pos.add(left.mul(3)).x > -1 && pos.add(left.mul(3)).x <17 ){
 							if (grille.getValue(pos, left.mul(3)) != "w")
-								if (pos.add(left.mul(4)).y > -1 && pos.add(left.mul(4)).y < 9 && pos.add(left.mul(4)).x > -1 && pos.add(left.mul(4)).y < 9)
+								if (pos.add(left.mul(4)).y > -1 && pos.add(left.mul(4)).y < 17 && pos.add(left.mul(4)).x > -1 && pos.add(left.mul(4)).y < 17)
 									possibilities_list.add(left.mul(4));
 							else{
-								if (pos.add(left.mul(2)).add(right).y > -1 && pos.add(left.mul(2)).add(right).y <9  && pos.add(left.mul(2)).add(right).x > -1 && pos.add(left.mul(2)).add(right).x < 9)
+								if (pos.add(left.mul(2)).add(right).y > -1 && pos.add(left.mul(2)).add(right).y <17  && pos.add(left.mul(2)).add(right).x > -1 && pos.add(left.mul(2)).add(right).x < 17)
 									if (grille.getValue(pos, left.mul(2).add(right)) != "w")
-										if (pos.add(left.mul(2)).add(right.mul(2)).y > -1 && pos.add(left.mul(2)).add(right.mul(2)).y < 9 && pos.add(left.mul(2)).add(right.mul(2)).x > -1 && pos.add(left.mul(2)).add(right.mul(2)).x <9)
+										if (pos.add(left.mul(2)).add(right.mul(2)).y > -1 && pos.add(left.mul(2)).add(right.mul(2)).y < 17 && pos.add(left.mul(2)).add(right.mul(2)).x > -1 && pos.add(left.mul(2)).add(right.mul(2)).x <17)
 											possibilities_list.add(left.mul(4));
-								if (pos.add(left.mul(2)).add(down).y > -1 && pos.add(left.mul(2)).add(down).y < 9 && pos.add(left.mul(2)).add(down).x > -1 && pos.add(left.mul(2)).add(down).x < 9)
+								if (pos.add(left.mul(2)).add(down).y > -1 && pos.add(left.mul(2)).add(down).y < 17 && pos.add(left.mul(2)).add(down).x > -1 && pos.add(left.mul(2)).add(down).x < 17)
 									if (grille.getValue(pos, left.mul(2).add(down)) != "w")
-										if (pos.add(left.mul(2)).add(down.mul(2)).y > -1 && pos.add(left.mul(2)).add(down.mul(2)).y <9 && pos.add(left.mul(2)).add(down.mul(2)).x > -1 && pos.add(left.mul(2)).add(down.mul(2)).x <9)
+										if (pos.add(left.mul(2)).add(down.mul(2)).y > -1 && pos.add(left.mul(2)).add(down.mul(2)).y <17 && pos.add(left.mul(2)).add(down.mul(2)).x > -1 && pos.add(left.mul(2)).add(down.mul(2)).x <17)
 											possibilities_list.add(left.mul(4));
 							}
 						}

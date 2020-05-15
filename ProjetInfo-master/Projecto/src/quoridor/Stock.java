@@ -83,14 +83,15 @@ public class Stock extends GridPane{
                             for (i = 0; i < 17; i++){
                                 if (player.color == "white"){
                                     p_path = new PathFinder(plateau, player.pos, new Vector(i, 0));
-                                    e_path =new PathFinder(plateau, player.enemy.pos, new Vector(i, 17));
+                                    e_path =new PathFinder(plateau, player.enemy.pos, new Vector(i, 16));
                                 }
                                 else{
-                                    p_path = new PathFinder(plateau, player.pos, new Vector(i, 17));
+                                    p_path = new PathFinder(plateau, player.pos, new Vector(i, 16));
                                     e_path =new PathFinder(plateau, player.enemy.pos, new Vector(i, 0));
                                 }
-                
-                                if (p_path.run(null) != null && e_path.run(null) != null){
+                                ArrayList<PFNode> path_p1 = p_path.run(null);
+                                ArrayList<PFNode> path_p2 = e_path.run(null);
+                                if (path_p1 != null && path_p2 != null){
                                     //un chemin existe pour chaque pion, pour pouvoir gagner
                                     found = true;
                                     break;
@@ -98,12 +99,18 @@ public class Stock extends GridPane{
                             }
 
                             //si NON: on retire le mur
-                            if (!found)
+                            if (!found){
                                 for(i = 0; i < 3; i++)
                                     plateau.setValue(new Vector(x+i, y), null);
-                            else
+                            }
+                            else{
                                 for(i = 0; i < 3; i++)
                                     tiles.get(x+i).get(y).setFill(Color.BROWN);
+    
+                                player.usingWall();
+                                i_count = player.stock_count;
+                                count.setText(Integer.toString(player.stock_count));
+                            }
                         }
                     }
     
@@ -112,16 +119,16 @@ public class Stock extends GridPane{
                             for (i = 0; i < 3; i++){
                                 //placer un mur
                             for (i = 0; i < 3; i++){
-                                plateau.setValue(new Vector(x+i, y), "w");
+                                plateau.setValue(new Vector(x, y+i), "w");
                             }
                             //verifier si chaque joueur peut gagner
                             for (int i = 0; i < 17; i++){
                                 if (player.color == "white"){
                                     p_path = new PathFinder(plateau, player.pos, new Vector(i, 0));
-                                    e_path =new PathFinder(plateau, player.enemy.pos, new Vector(i, 17));
+                                    e_path =new PathFinder(plateau, player.enemy.pos, new Vector(i, 16));
                                 }
                                 else{
-                                    p_path = new PathFinder(plateau, player.pos, new Vector(i, 17));
+                                    p_path = new PathFinder(plateau, player.pos, new Vector(i, 16));
                                     e_path =new PathFinder(plateau, player.enemy.pos, new Vector(i, 0));
                                 }
                 
@@ -133,19 +140,22 @@ public class Stock extends GridPane{
                             }
 
                             //si NON: on retire le mur
-                            if (!found)
-                                for(i = 0; i < 3; i++)
+                            if (!found == true){
+                                for(i = 0; i < 3; i++){
                                     plateau.setValue(new Vector(x, y+i), null);
-                            else
+                                }
+                            }
+                            else{
                                 for(i = 0; i < 3; i++)
                                     tiles.get(x).get(y+i).setFill(Color.BROWN);
+
+                                player.usingWall();
+                                i_count = player.stock_count;
+                                count.setText(Integer.toString(player.stock_count));
+                            }
                             }
                         }
                     }
-    
-                    player.usingWall();
-                    i_count = player.stock_count;
-                    count.setText(Integer.toString(player.stock_count));
     
                     actif = null;
                 }
@@ -209,7 +219,7 @@ public class Stock extends GridPane{
             if (sens == "Vertical"){
                 //on recupere la valeur actuelle des 3 cases du mur et si on sort du plateau, alors on peut pas placer de mur
                 if(origin_y%2==0){
-                    if(origin_y + i > -1 && origin_y + i < 9)
+                    if(origin_y + i > -1 && origin_y + i < 17)
                         val = plateau.getValue(new Vector(origin_x, origin_y + i));
                     else
                         return true;
@@ -220,7 +230,7 @@ public class Stock extends GridPane{
             else if (sens == "Horizontal"){
                 //on recupere la valeur des 3 cases et si on sort du plateau, alors on peut pas placer de mur
                 if(origin_x%2==0){
-                    if(origin_x + i > -1 && origin_x + i < 9)
+                    if(origin_x + i > -1 && origin_x + i < 17)
                         val = plateau.getValue(new Vector(origin_x + i, origin_y));
                     else
                         return true;

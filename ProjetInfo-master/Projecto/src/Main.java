@@ -107,8 +107,23 @@ public class Main extends Application  {
 
         grid1v1.add(buttonhome, 1 , 0 ,1 ,1);
 		BorderPane layout2 = new BorderPane();
+
+		Stock stock = new Stock(grid1v1, plateau, layout2, tiles);
+
+		//faire fonctionner le jeu ici
+		player1 = new Pawn(grid1v1, plateau, tiles, new Vector((int)(size/2),size-1), "white", "Player");
+		player2 = new Pawn(grid1v1, plateau, tiles, new Vector((int)(size/2),0), "black", "Player");
+        player1.enemy = player2;
+        player1.stock = stock;
+        player2.enemy = player1;
+        player2.stock = stock;
+
+        player1.enable();
+
+
 		layout2.setCenter(grid1v1 );
 		layout2.setTop(buttonhome);
+		layout2.setBottom(stock);
 		
 		mode1v1 = new Scene (layout2 , 800 , 800);
 		
@@ -137,18 +152,6 @@ public class Main extends Application  {
 		VBox layout5 = new VBox();
 		layout5.getChildren().addAll(label5 , returnhome2);
 		modeIAgood = new Scene (layout5 ,500 ,500);
-
-		Stock stock = new Stock(grid1v1, plateau, layout2, tiles);
-
-		//faire fonctionner le jeu ici
-		player1 = new Pawn(grid1v1, plateau, tiles, new Vector((int)(size/2),size-1), "white", "Player");
-		player2 = new Pawn(grid1v1, plateau, tiles, new Vector((int)(size/2),0), "black", "Player");
-        player1.enemy = player2;
-        player1.stock = stock;
-        player2.enemy = player1;
-        player2.stock = stock;
-
-        player1.enable();
 		
 		quoridor.setScene(home);
 		quoridor.setTitle("Quoridor");

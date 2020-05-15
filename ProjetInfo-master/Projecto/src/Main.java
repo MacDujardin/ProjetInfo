@@ -1,5 +1,7 @@
 //author: Igor Dujardin
 
+import quoridor.*;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -11,9 +13,15 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import quoridor.*;
 
+import javafx.scene.paint.Color;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.geometry.Insets;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.shape.Rectangle;
 
+import java.util.ArrayList;
 
 
 public class Main extends Application  {
@@ -24,6 +32,8 @@ public class Main extends Application  {
 	public static int size = 17 ;
 	static Board plateau;
 	public static Pawn player1, player2;
+	public ArrayList<ArrayList<Rectangle>> tiles = new ArrayList<ArrayList<Rectangle>>();
+
 	
 	
 	
@@ -75,6 +85,26 @@ public class Main extends Application  {
                  grid1v1.getRowConstraints().add(rowConst);  	
         	}
         }
+
+        Rectangle rect = null;
+        for (i = 0; i < size; i++){
+            tiles.add(new ArrayList<Rectangle>());
+            for (int j = 0; j < size; j++){
+                if(i%2 == 0 && j%2 != 0)
+                    rect = new Rectangle(0,0,20,5);
+                else if(i%2 != 0 && j%2 == 0)
+                    rect = new Rectangle(0,0,5,20);
+                else if(i%2 != 0 && j%2 != 0)
+                    rect = new Rectangle(0,0,5,5);
+
+                if (rect != null)
+                    grid1v1.add(rect, i, j, 1, 1);
+
+                tiles.get(i).add(rect);
+                rect = null;
+            }
+        }
+
         grid1v1.add(buttonhome, 1 , 0 ,1 ,1);
 		BorderPane layout2 = new BorderPane();
 		layout2.setCenter(grid1v1 );
@@ -108,9 +138,17 @@ public class Main extends Application  {
 		layout5.getChildren().addAll(label5 , returnhome2);
 		modeIAgood = new Scene (layout5 ,500 ,500);
 
+		Stock stock = new Stock(grid1v1, plateau, layout2, tiles);
+
 		//faire fonctionner le jeu ici
-		player1 = new Pawn(grid1v1, plateau, new Vector((int)(size/2),size-1), "white", "Player");
-		player2 = new Pawn(grid1v1, plateau, new Vector((int)(size/2),size-1), "white", "Player");
+		player1 = new Pawn(grid1v1, plateau, tiles, new Vector((int)(size/2),size-1), "white", "Player");
+		player2 = new Pawn(grid1v1, plateau, tiles, new Vector((int)(size/2),0), "black", "Player");
+        player1.enemy = player2;
+        player1.stock = stock;
+        player2.enemy = player1;
+        player2.stock = stock;
+
+        player1.enable();
 		
 		quoridor.setScene(home);
 		quoridor.setTitle("Quoridor");

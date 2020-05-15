@@ -7,6 +7,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import java.util.ArrayList;
 import java.util.Random;
+import java.net.URL;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 //author: Nathan Amorison [BACKEND]
 //author: Igor Dujardin [FRONTEND]
@@ -18,22 +21,24 @@ public class Pawn{ //extends {
 	private Possibilitie[] possibilities;
 	private Vector[] cases_possibilities;
 	private Vector[] [] all_cases_possibilities;
-	private Stock stock;
 	private int i;
 	private Button pawnbutton;
+    private ArrayList<ArrayList<Rectangle>> tiles;
 
+	public Stock stock;
 	public String playable;
 	public int stock_count = 8;
 	public GridPane parent;
 	public Vector pos;
 	public String color;
-	public Pawn enemy;
+	public Pawn enemy = null;
 	public Board plateau;
 
-	public Pawn(GridPane parent, Board plateau, Vector pos, String color, String playable){
+	public Pawn(GridPane parent, Board plateau, ArrayList<ArrayList<Rectangle>> tiles, Vector pos, String color, String playable){
         /*Constructeur pour un pion
          *parent est la variable qui correspond a l'objet de javafx qui contient le pion
          *plateau est le "pointeur" vers le tableau Board qui contient les donnees du jeu
+         *tiles sont les cases qui peuvent accueillir un mur
          *pos correspond a la position qui est donne au pion lors de sa construction
          *color est la variable qui permet de choisir la couleur du pion
          *playable permet de savoir si le pion est jouable ou pas
@@ -44,19 +49,23 @@ public class Pawn{ //extends {
         this.color = color;
         this.playable = playable;
         this.plateau = plateau;
-        Image whitep = new Image("file:White.png");
-        Image blackp = new Image("file:Black.png");
+        this.tiles = tiles;
+
         pawnbutton = new Button();
         parent.add(pawnbutton , pos.x , pos.y);
         pawnbutton.setOpacity(100);
         pawnbutton.setMinWidth(10.0);
         pawnbutton.setMinHeight(10.0);
 
+		URL imageURL = null;
+
         if (this.color.equals(white)) {
-            pawnbutton.setGraphic(new ImageView(whitep));
+        	imageURL = getClass().getResource("images\\White.png");
+            pawnbutton.setGraphic(new ImageView(new Image(imageURL.toExternalForm())));
         }
         else {
-            pawnbutton.setGraphic(new ImageView(blackp));
+        	imageURL = getClass().getResource("images\\Black.png");
+            pawnbutton.setGraphic(new ImageView(new Image(imageURL.toExternalForm())));
         }
     }
 
@@ -115,9 +124,11 @@ public class Pawn{ //extends {
 			Vector mvmt = cases_possibilities[i];
 			String mur_case = plateau.getValue(pos, mvmt);
 			String pawn_case = plateau.getValue(pos, mvmt.mul(2));
-			if (mur_case == "w")
+
+			if (mur_case == "w"){
 				all_cases_possibilities[i] = null;
 				//on ne peut pas aller dans cette direction
+			}
 
 			else if (pawn_case == "p"){
 				//s'il y a un pion sur la case
@@ -131,27 +142,37 @@ public class Pawn{ //extends {
 					if (mur_case_left == "w" && mur_case_right != "w"){
 						//ajouter le mvmt vers la droite
 						sub_list = new Vector[1];
-						sub_list[0] = mvmt.mul(2).sub(mvmt.perpendiculaire());
+						sub_list[0] = mvmt.mul(2).sub(mvmt.mul(2).perpendiculaire());
 					}
 					else if (mur_case_left != "w" && mur_case_right == "w"){
 						//ajouter le mvmt vers la gauche
 						sub_list = new Vector[1];
-						sub_list[0] = mvmt.mul(2).add(mvmt.perpendiculaire());
+						sub_list[0] = mvmt.mul(2).add(mvmt.mul(2).perpendiculaire());
 					}
 					else if (mur_case_left != "w" && mur_case_right != "w"){
 						//ajouter les 2 mvmts
 						sub_list = new Vector[2];
-						sub_list[0] = mvmt.mul(2).sub(mvmt.perpendiculaire());
-						sub_list[1] = mvmt.mul(2).add(mvmt.perpendiculaire());
+						sub_list[0] = mvmt.mul(2).sub(mvmt.mul(2).perpendiculaire());
+						sub_list[1] = mvmt.mul(2).add(mvmt.mul(2).perpendiculaire());
 					}
 
 					//pas de direction possible
-					sub_list = null;
+					else
+						sub_list = null;
+
+					all_cases_possibilities[i] = sub_list;
+				}
+				else{
+					Vector direction = pos.add(mvmt.mul(4));
+					if(direction.x > 0 && direction.y < 17 && direction.x < 17 && direction.y > 0){
+						Vector [] sub_list = {mvmt.mul(4)};
+						all_cases_possibilities[i] = sub_list;
+					}
 				}
 			}
 
-			else{
-				Vector[] sub_list = {mvmt.mul(2)}; //juste le move de base
+			else if (mur_case != "w" && pawn_case != "p"){
+				Vector [] sub_list = {mvmt.mul(2)};
 				all_cases_possibilities[i] = sub_list;
 			}
 		}
@@ -232,7 +253,7 @@ public class Pawn{ //extends {
 		disable();
 		click_num = 0;
 
-		stock.player = enemy;
+		disable();
 		if (enemy.playable != "Player")
 			enemy.runIA();
 		else
@@ -257,33 +278,40 @@ public class Pawn{ //extends {
 		}
 
 		if (stop){
-			//action quitter
-			System.out.println("quitter")
+			//le jeu est fini
+			disable();
+			enemy.disable();
+			System.out.println("quitter");
 		}
 	}
 
 	public void enable(){
 		//rend le pion jouable
-        pawnbutton.setOnAction(e -> Clicked()); 
+		stock.show(this);
+		if (playable == "Player")
+        	pawnbutton.setOnAction(e -> Clicked());
+        else
+        	runIA();
 	}
 
 	public void disable(){
 		//rend le pion statique
-        pawnbutton.setOnAction(e -> null); 
+        pawnbutton.setOnAction(null); 
 	}
 	
 	public void usingWall() {
+		disable();
+		enemy.enable();
 		stock_count--;
 	}
 
 	public void runIA(){
 		Random generator = new Random();
 		int wall_or_move;
-		Wall wall;
-		boolean free = false;
+		boolean free = false, found = false;
 		Vector w_pos;
 		PathFinder e_path, p_path;
-		ArrayList<PFNode[]> pfs = new ArrayList<PFNode[]>();
+		ArrayList<ArrayList<PFNode>> pfs = new ArrayList<ArrayList<PFNode>>();
 		Vector delta;
 		Vector temp_pos;
 
@@ -305,21 +333,65 @@ public class Pawn{ //extends {
 			if (wall_or_move == 0){
 				//mettre un wall a une position random
 				do{
+					//chercher une position random qui soit correcte
 					do{
-						x = generator.nextInt(17);
-					}while (x%2 == 1);
-					do{
-						y = generator.nextInt(17);
-					}while (y%2 == 1);
-					chose_sens = generator.nextInt(2);
-					w_pos = new Vector(x,y);
-
-					wall = new Wall(parent, plateau, w_pos, sens[chose_sens]);
-					wall.player = this;
-					wall.enemy = enemy;
-
-					free = wall.placeForIA();
-				}while(!free);
+						//choix de la position random
+						do{
+							x = generator.nextInt(17);
+							y = generator.nextInt(17);
+						}while ((y%2 == 1 && y%2 == 0) || (y%2 == 0 && y%2 == 1));
+						chose_sens = generator.nextInt(2);
+						w_pos = new Vector(x,y);
+	
+						free = !stock.busy(x,y, sens[chose_sens]);
+					}while(!free);
+					
+					//mettre les murs
+					for (i = 0; i < 3; i++){
+						if(sens[chose_sens] == "Vertical")
+							plateau.setValue(new Vector(x, y+i), "w");
+						else if (sens[chose_sens] == "Horizontal")
+							plateau.setValue(new Vector(x+i, y), "w");
+					}
+					
+					//verifier si chaque joueur peut gagner
+					for (i = 0; i < 17; i++){
+						if (color == white){
+							p_path = new PathFinder(plateau, this.pos, new Vector(i, 0));
+							e_path =new PathFinder(plateau, enemy.pos, new Vector(i, 17));
+						}
+						else{
+							p_path = new PathFinder(plateau, this.pos, new Vector(i, 17));
+							e_path =new PathFinder(plateau, enemy.pos, new Vector(i, 0));
+						}
+	
+						if (p_path.run(null) != null && e_path.run(null) != null){
+							//un chemin existe pour chaque pion, pour pouvoir gagner
+							found = true;
+							break;
+						}
+					}
+					// si NON: on retire tout
+					if (!found){
+						for (i = 0; i < 3; i++){
+							if(sens[chose_sens] == "Vertical")
+								plateau.setValue(new Vector(x, y+i), null);
+							else if (sens[chose_sens] == "Horizontal")
+								plateau.setValue(new Vector(x+i, y), null);
+						}
+					}
+					//si OUI: on indique le placement du mur, et on passe au joueur suivant
+					else{
+						for (i = 0; i < 3; i++){
+							if(sens[chose_sens] == "Vertical")
+								tiles.get(x).get(y+i).setFill(Color.BROWN);
+							else if (sens[chose_sens] == "Horizontal")
+								tiles.get(x+i).get(y).setFill(Color.BROWN);
+						}
+						usingWall();
+					}
+				}while(!found);
+					
 			}
 			else if (wall_or_move ==1) {
 				//trouver tous les moves possibles
@@ -363,14 +435,14 @@ public class Pawn{ //extends {
 
 				//trouver le node avec les cost le plus petit dans e_nodes
 				for(i = 1; i < pfs.size(); i++){
-					for (int n = 0; n<pfs.get(i).length; n++){
+					for (int n = 0; n<pfs.get(i).size(); n++){
 						if(less_cost == null){
-							less_cost = pfs.get(i)[n];
+							less_cost = pfs.get(i).get(n);
 							node_list_id = i;
 							node_id = n;
 						}
-						else if (less_cost.cost > pfs.get(i)[n].cost){
-							less_cost = pfs.get(i)[n];
+						else if (less_cost.cost > pfs.get(i).get(n).cost){
+							less_cost = pfs.get(i).get(n);
 							node_list_id = i;
 							node_id = n;
 						}
@@ -390,28 +462,67 @@ public class Pawn{ //extends {
 					b = 0;
 					if (a>0){
 						//verif s'il y a un node apres
-						if(pfs.get(node_list_id).length>node_id_temp+a){
-							delta = temp.pos.delta(pfs.get(node_list_id)[node_id_temp+a].pos).truediv(2);
+						if(pfs.get(node_list_id).size()>node_id_temp+a){
+							delta = temp.pos.delta(pfs.get(node_list_id).get(node_id_temp+a).pos).truediv(2);
 							w_pos = temp.pos.add(delta);
-							temp_pos = w_pos;
+							//temp_pos = w_pos;
 							if (delta.x == 0)
 								sens = "Horizontal";
 							else if (delta.y == 0)
 								sens = "Vertical";
-							do{
-								if (sens == "Horizontal")
-									temp_pos.x = w_pos.x + b;
-								else
-									temp_pos.y = w_pos.y + b;
-								b++;
-								wall = new Wall(parent, plateau, temp_pos, sens);
-								wall.player = this;
-								wall.enemy = enemy;
-								
-								free = wall.placeForIA();
-							}while(b < 3 && !free);
+
+							//verifier que ca soit libre
+							free = !stock.busy(w_pos.x, w_pos.y, sens);
+
+							//placer un mur
+							if (free){
+								for (i = 0; i < 3; i++){
+									if(sens == "Vertical")
+										plateau.setValue(new Vector(w_pos.x, w_pos.y+i), "w");
+									else if (sens == "Horizontal")
+										plateau.setValue(new Vector(w_pos.x+i, w_pos.y), "w");
+								}
+
+								//verifier si chaque joueur peut gagner
+								for (i = 0; i < 17; i++){
+									if (color == white){
+										p_path = new PathFinder(plateau, this.pos, new Vector(i, 0));
+										e_path =new PathFinder(plateau, enemy.pos, new Vector(i, 17));
+									}
+									else{
+										p_path = new PathFinder(plateau, this.pos, new Vector(i, 17));
+										e_path =new PathFinder(plateau, enemy.pos, new Vector(i, 0));
+									}
+				
+									if (p_path.run(null) != null && e_path.run(null) != null){
+										//un chemin existe pour chaque pion, pour pouvoir gagner
+										found = true;
+										break;
+									}
+								}
+
+								//si NON: on retire les murs
+								if (!found){
+									for (i = 0; i < 3; i++){
+										if(sens == "Vertical")
+											plateau.setValue(new Vector(w_pos.x, w_pos.y+i), null);
+										else if (sens == "Horizontal")
+											plateau.setValue(new Vector(w_pos.x+i, w_pos.y), null);
+									}
+								}
+								else{
+									for (i = 0; i < 3; i++){
+										if (sens == "Vertical")
+											tiles.get(w_pos.x).get(w_pos.y).setFill(Color.BROWN);
+										else if (sens == "Horizontal")
+											tiles.get(w_pos.x).get(w_pos.y).setFill(Color.BROWN);
+									}
+									usingWall();
+								}
+							}
+
 							//on met le 2eme node en node a regrader apres
-							temp = pfs.get(node_list_id)[node_id_temp+a];
+							temp = pfs.get(node_list_id).get(node_id_temp+a);
 							node_id_temp++;
 						}
 						//sinon, il faudra regarder devant
@@ -430,18 +541,56 @@ public class Pawn{ //extends {
 								sens = "Horizontal";
 							else if (delta.y == 0)
 								sens = "Vertical";
-							do{
-								if (sens == "Horizontal")
-									temp_pos.x = w_pos.x + b;
-								else
-									temp_pos.y = w_pos.y + b;
-								b++;
-								wall = new Wall(parent, plateau, temp_pos, sens);
-								wall.player = this;
-								wall.enemy = enemy;
-								
-								free = wall.placeForIA();
-							}while(b < 3 && !free);
+							
+							//verifier que ca soit libre
+							free = !stock.busy(w_pos.x, w_pos.y, sens);
+
+							//placer un mur
+							if (free){
+								for (i = 0; i < 3; i++){
+									if(sens == "Vertical")
+										plateau.setValue(new Vector(w_pos.x, w_pos.y+i), "w");
+									else if (sens == "Horizontal")
+										plateau.setValue(new Vector(w_pos.x+i, w_pos.y), "w");
+								}
+
+								//verifier si chaque joueur peut gagner
+								for (i = 0; i < 17; i++){
+									if (color == white){
+										p_path = new PathFinder(plateau, this.pos, new Vector(i, 0));
+										e_path =new PathFinder(plateau, enemy.pos, new Vector(i, 17));
+									}
+									else{
+										p_path = new PathFinder(plateau, this.pos, new Vector(i, 17));
+										e_path =new PathFinder(plateau, enemy.pos, new Vector(i, 0));
+									}
+				
+									if (p_path.run(null) != null && e_path.run(null) != null){
+										//un chemin existe pour chaque pion, pour pouvoir gagner
+										found = true;
+										break;
+									}
+								}
+
+								//si NON: on retire les murs
+								if (!found){
+									for (i = 0; i < 3; i++){
+										if(sens == "Vertical")
+											plateau.setValue(new Vector(w_pos.x, w_pos.y+i), null);
+										else if (sens == "Horizontal")
+											plateau.setValue(new Vector(w_pos.x+i, w_pos.y), null);
+									}
+								}
+								else{
+									for (i = 0; i < 3; i++){
+										if (sens == "Vertical")
+											tiles.get(w_pos.x).get(w_pos.y).setFill(Color.BROWN);
+										else if (sens == "Horizontal")
+											tiles.get(w_pos.x).get(w_pos.y).setFill(Color.BROWN);
+									}
+									usingWall();
+								}
+							}
 						}
 						else{
 							wall_or_move = 1;
@@ -465,8 +614,8 @@ public class Pawn{ //extends {
 				int [] sommes_couts = new int[pfs.size()];
 				for (i = 0; i<pfs.size(); i++){
 					sommes_couts[i] = 0;
-					for (int j = 0; j < pfs.get(i).length; j++)
-						sommes_couts[i] = sommes_couts[i] +(int) pfs.get(i)[j].cost;
+					for (int j = 0; j < pfs.get(i).size(); j++)
+						sommes_couts[i] = sommes_couts[i] +(int) pfs.get(i).get(j).cost;
 				}
 				int less_cost_node = sommes_couts[0];
 				int id = 0;
@@ -480,7 +629,7 @@ public class Pawn{ //extends {
 
 				//on doit prendre le node qui nous interesse, pour connaitre sa pos, et bouger dessus
 				//ce node est a l'index 1 dans la liste de node du pathfinder
-				move(pfs.get(id)[1].getVect());
+				move(pfs.get(id).get(1).getVect());
 			}
 		}
 
@@ -506,12 +655,12 @@ public class Pawn{ //extends {
 			for (i = 0; i < pfs.size(); i=i+2){
 				sommes_couts_p[i/2] = 0;
 				for (int j = 0; j < sommes_couts_p.length; j++)
-					sommes_couts_p[i/2] = sommes_couts_p[i/2] + (int) pfs.get(i)[j].cost;
+					sommes_couts_p[i/2] = sommes_couts_p[i/2] + (int) pfs.get(i).get(j).cost;
 			}
 			for (i = 1; i < pfs.size(); i=i+2){
 				sommes_couts_e[(i-1)/2] = 0;
 				for (int j = 0; j < sommes_couts_e.length; j++)
-					sommes_couts_e[(i-1)/2] = sommes_couts_e[(i-1)/2] +(int) pfs.get(i)[j].cost;
+					sommes_couts_e[(i-1)/2] = sommes_couts_e[(i-1)/2] +(int) pfs.get(i).get(j).cost;
 			}
 
 			int less_cost_p = sommes_couts_p[0];
@@ -534,9 +683,9 @@ public class Pawn{ //extends {
 			if (less_cost_p < less_cost_e && stock_count > 0){
 				//placer un mur
 				//trouver le node ennemi avec le cost le plus bas dans le path le plus court
-				for (int i = 1; i < pfs.get(id_e*2+1).length; i++){
-					if (less_cost.cost > pfs.get(id_e*2+1)[i].cost){
-						less_cost = pfs.get(id_e*2+1)[i];
+				for (int i = 1; i < pfs.get(id_e*2+1).size(); i++){
+					if (less_cost.cost > pfs.get(id_e*2+1).get(i).cost){
+						less_cost = pfs.get(id_e*2+1).get(i);
 						node_id = i;
 					}
 				}
@@ -554,28 +703,66 @@ public class Pawn{ //extends {
 					b = 0;
 					if (a>0){
 						//verif s'il y a un node apres
-						if(pfs.get(node_list_id).length>node_id_temp+a){
-							delta = temp.pos.delta(pfs.get(node_list_id)[node_id_temp+a].pos).truediv(2);
+						if(pfs.get(node_list_id).size()>node_id_temp+a){
+							delta = temp.pos.delta(pfs.get(node_list_id).get(node_id_temp+a).pos).truediv(2);
 							w_pos = temp.pos.add(delta);
 							temp_pos = w_pos;
 							if (delta.x == 0)
 								sens = "Horizontal";
 							else if (delta.y == 0)
 								sens = "Vertical";
-							do{
-								if (sens == "Horizontal")
-									temp_pos.x = w_pos.x + b;
-								else
-									temp_pos.y = w_pos.y + b;
-								b++;
-								wall = new Wall(parent, plateau, temp_pos, sens);
-								wall.player = this;
-								wall.enemy = enemy;
-								
-								free = wall.placeForIA();
-							}while(b < 3 && !free);
+							
+							//verifier que ca soit libre
+							free = !stock.busy(w_pos.x, w_pos.y, sens);
+
+							//placer un mur
+							if (free){
+								for (i = 0; i < 3; i++){
+									if(sens == "Vertical")
+										plateau.setValue(new Vector(w_pos.x, w_pos.y+i), "w");
+									else if (sens == "Horizontal")
+										plateau.setValue(new Vector(w_pos.x+i, w_pos.y), "w");
+								}
+
+								//verifier si chaque joueur peut gagner
+								for (i = 0; i < 17; i++){
+									if (color == white){
+										p_path = new PathFinder(plateau, this.pos, new Vector(i, 0));
+										e_path =new PathFinder(plateau, enemy.pos, new Vector(i, 17));
+									}
+									else{
+										p_path = new PathFinder(plateau, this.pos, new Vector(i, 17));
+										e_path =new PathFinder(plateau, enemy.pos, new Vector(i, 0));
+									}
+				
+									if (p_path.run(null) != null && e_path.run(null) != null){
+										//un chemin existe pour chaque pion, pour pouvoir gagner
+										found = true;
+										break;
+									}
+								}
+
+								//si NON: on retire les murs
+								if (!found){
+									for (i = 0; i < 3; i++){
+										if(sens == "Vertical")
+											plateau.setValue(new Vector(w_pos.x, w_pos.y+i), null);
+										else if (sens == "Horizontal")
+											plateau.setValue(new Vector(w_pos.x+i, w_pos.y), null);
+									}
+								}
+								else{
+									for (i = 0; i < 3; i++){
+										if (sens == "Vertical")
+											tiles.get(w_pos.x).get(w_pos.y).setFill(Color.BROWN);
+										else if (sens == "Horizontal")
+											tiles.get(w_pos.x).get(w_pos.y).setFill(Color.BROWN);
+									}
+									usingWall();
+								}
+							}
 							//on met le 2eme node en node a regrader apres
-							temp = pfs.get(node_list_id)[node_id_temp+a];
+							temp = pfs.get(node_list_id).get(node_id_temp+a);
 							node_id_temp++;
 						}
 						//sinon, il faudra regarder devant
@@ -594,18 +781,56 @@ public class Pawn{ //extends {
 								sens = "Horizontal";
 							else if (delta.y == 0)
 								sens = "Vertical";
-							do{
-								if (sens == "Horizontal")
-									temp_pos.x = w_pos.x + b;
-								else
-									temp_pos.y = w_pos.y + b;
-								b++;
-								wall = new Wall(parent, plateau, temp_pos, sens);
-								wall.player = this;
-								wall.enemy = enemy;
-								
-								free = wall.placeForIA();
-							}while(b < 3 && !free);
+							
+							//verifier que ca soit libre
+							free = !stock.busy(w_pos.x, w_pos.y, sens);
+
+							//placer un mur
+							if (free){
+								for (i = 0; i < 3; i++){
+									if(sens == "Vertical")
+										plateau.setValue(new Vector(w_pos.x, w_pos.y+i), "w");
+									else if (sens == "Horizontal")
+										plateau.setValue(new Vector(w_pos.x+i, w_pos.y), "w");
+								}
+
+								//verifier si chaque joueur peut gagner
+								for (i = 0; i < 17; i++){
+									if (color == white){
+										p_path = new PathFinder(plateau, this.pos, new Vector(i, 0));
+										e_path =new PathFinder(plateau, enemy.pos, new Vector(i, 17));
+									}
+									else{
+										p_path = new PathFinder(plateau, this.pos, new Vector(i, 17));
+										e_path =new PathFinder(plateau, enemy.pos, new Vector(i, 0));
+									}
+				
+									if (p_path.run(null) != null && e_path.run(null) != null){
+										//un chemin existe pour chaque pion, pour pouvoir gagner
+										found = true;
+										break;
+									}
+								}
+
+								//si NON: on retire les murs
+								if (!found){
+									for (i = 0; i < 3; i++){
+										if(sens == "Vertical")
+											plateau.setValue(new Vector(w_pos.x, w_pos.y+i), null);
+										else if (sens == "Horizontal")
+											plateau.setValue(new Vector(w_pos.x+i, w_pos.y), null);
+									}
+								}
+								else{
+									for (i = 0; i < 3; i++){
+										if (sens == "Vertical")
+											tiles.get(w_pos.x).get(w_pos.y).setFill(Color.BROWN);
+										else if (sens == "Horizontal")
+											tiles.get(w_pos.x).get(w_pos.y).setFill(Color.BROWN);
+									}
+									usingWall();
+								}
+							}
 						}
 						else{
 							wall_or_move = 1;
@@ -616,7 +841,7 @@ public class Pawn{ //extends {
 			}
 			else{
 				//bouger
-				move(pfs.get(id_p*2)[1].getVect());
+				move(pfs.get(id_p*2).get(1).getVect());
 			}
 		}
 	}
